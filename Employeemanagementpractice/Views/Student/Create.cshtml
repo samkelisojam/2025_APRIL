@@ -1,0 +1,496 @@
+@model Employeemanagementpractice.Models.ViewModels.StudentViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{ ViewData["Title"] = Model.Id > 0 ? "Edit Student" : "Register Student"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Students</a>
+            <h2 class="mt-1" style="font-size:1.1rem;"><i class="fas fa-@(Model.Id > 0 ? "edit" : "user-plus") me-2"></i>@(Model.Id > 0 ? "Edit" : "Register") Student</h2>
+        </div>
+    </div>
+
+    <form asp-action="@(Model.Id > 0 ? "Edit" : "Create")" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <div asp-validation-summary="All" class="alert alert-danger" style="display:none;"></div>
+
+        <!-- Step navigation -->
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <button type="button" class="btn btn-primary btn-sm step-btn active" onclick="showSection('personal')"><i class="fas fa-user me-1"></i>Personal</button>
+            <button type="button" class="btn btn-outline-primary btn-sm step-btn" onclick="showSection('contact')"><i class="fas fa-phone me-1"></i>Contact</button>
+            <button type="button" class="btn btn-outline-primary btn-sm step-btn" onclick="showSection('address')"><i class="fas fa-map-marker-alt me-1"></i>Address</button>
+            <button type="button" class="btn btn-outline-primary btn-sm step-btn" onclick="showSection('qualification')"><i class="fas fa-graduation-cap me-1"></i>Qualification</button>
+            <button type="button" class="btn btn-outline-primary btn-sm step-btn" onclick="showSection('experience')"><i class="fas fa-briefcase me-1"></i>Experience</button>
+            <button type="button" class="btn btn-outline-primary btn-sm step-btn" onclick="showSection('nextofkin')"><i class="fas fa-users me-1"></i>Next of Kin</button>
+            <button type="button" class="btn btn-outline-primary btn-sm step-btn" onclick="showSection('bank')"><i class="fas fa-university me-1"></i>Banking</button>
+            <button type="button" class="btn btn-outline-primary btn-sm step-btn" onclick="showSection('documents')"><i class="fas fa-file-alt me-1"></i>Documents</button>
+        </div>
+
+        <!-- SECTION: Personal Information -->
+        <div class="stat-card mb-4 form-section" id="section-personal">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-user me-2 text-primary"></i>Personal Information</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Team Leader <span class="text-danger">*</span></label>
+                    <select asp-for="TeamLeaderId" class="form-select">
+                        <option value="">-- Select Team Leader --</option>
+                        @foreach (var tl in ViewBag.TeamLeaders as List<SelectListItem>)
+                        {
+                            <option value="@tl.Value">@tl.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="TeamLeaderId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Title" class="form-label fw-bold">Title</label>
+                    <select asp-for="Title" class="form-select">
+                        <option value="">—</option>
+                        <option>Mr</option><option>Mrs</option><option>Ms</option><option>Miss</option><option>Dr</option><option>Prof</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="FirstName" class="form-label fw-bold">First Name <span class="text-danger">*</span></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="MiddleName" class="form-label fw-bold">Middle Name</label>
+                    <input asp-for="MiddleName" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="LastName" class="form-label fw-bold">Last Name <span class="text-danger">*</span></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="PreferredName" class="form-label fw-bold">Preferred Name</label>
+                    <input asp-for="PreferredName" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="SAIDNumber" class="form-label fw-bold">SA ID Number <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        <input asp-for="SAIDNumber" class="form-control" maxlength="13" oninput="validateSAID(this)" placeholder="13 digit SA ID" />
+                    </div>
+                    <span asp-validation-for="SAIDNumber" class="text-danger small"></span>
+                    <div id="saidFeedback" class="form-text"></div>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Gender" class="form-label fw-bold">Gender</label>
+                    <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Employeemanagementpractice.Models.Gender>()" class="form-select"></select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Race" class="form-label fw-bold">Race</label>
+                    <select asp-for="Race" class="form-select">
+                        <option value="">—</option>
+                        @foreach (var r in Enum.GetValues<Employeemanagementpractice.Models.Race>())
+                        {
+                            <option value="@r">@r</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Nationality" class="form-label fw-bold">Nationality</label>
+                    <input asp-for="Nationality" class="form-control" value="@(Model.Nationality ?? "South African")" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="HomeLanguage" class="form-label fw-bold">Home Language</label>
+                    <select asp-for="HomeLanguage" class="form-select">
+                        <option value="">—</option>
+                        <option>Afrikaans</option><option>English</option><option>IsiNdebele</option><option>IsiXhosa</option><option>IsiZulu</option>
+                        <option>Sepedi</option><option>Sesotho</option><option>Setswana</option><option>SiSwati</option><option>Tshivenda</option><option>Xitsonga</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="MaritalStatus" class="form-label fw-bold">Marital Status</label>
+                    <select asp-for="MaritalStatus" class="form-select">
+                        <option value="">—</option>
+                        @foreach (var ms in Enum.GetValues<Employeemanagementpractice.Models.MaritalStatus>())
+                        {
+                            <option value="@ms">@ms</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="DisabilityStatus" class="form-label fw-bold">Disability</label>
+                    <select asp-for="DisabilityStatus" class="form-select" onchange="document.getElementById('disabilityDesc').style.display=this.value&&this.value!='None'?'block':'none'">
+                        <option value="">None</option>
+                        @foreach (var ds in Enum.GetValues<Employeemanagementpractice.Models.DisabilityStatus>())
+                        {
+                            <option value="@ds">@ds</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6" id="disabilityDesc" style="display:@(Model.DisabilityStatus.HasValue && Model.DisabilityStatus != Employeemanagementpractice.Models.DisabilityStatus.None ? "block" : "none")">
+                    <label asp-for="DisabilityDescription" class="form-label fw-bold">Disability Description</label>
+                    <input asp-for="DisabilityDescription" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Profile Photo <small class="text-muted">(Optional)</small></label>
+                    <input type="file" asp-for="ProfileImage" class="form-control" accept="image/*" />
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Contact Information -->
+        <div class="stat-card mb-4 form-section" id="section-contact" style="display:none;">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-phone me-2 text-info"></i>Contact Information</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="Email" class="form-label fw-bold">Email Address</label>
+                    <div class="input-group"><span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input asp-for="Email" class="form-control" placeholder="email@example.co.za" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Phone" class="form-label fw-bold">Phone Number</label>
+                    <div class="input-group"><span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        <input asp-for="Phone" class="form-control" placeholder="0XX XXX XXXX" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="AlternativePhone" class="form-label fw-bold">Alternative Phone</label>
+                    <div class="input-group"><span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
+                        <input asp-for="AlternativePhone" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="WhatsAppNumber" class="form-label fw-bold"><i class="fab fa-whatsapp text-success me-1"></i>WhatsApp Number</label>
+                    <div class="input-group"><span class="input-group-text bg-success text-white"><i class="fab fa-whatsapp"></i></span>
+                        <input asp-for="WhatsAppNumber" class="form-control" placeholder="e.g. +27 XX XXX XXXX" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Address -->
+        <div class="stat-card mb-4 form-section" id="section-address" style="display:none;">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-map-marker-alt me-2 text-danger"></i>Physical Address</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="StreetAddress" class="form-label fw-bold">Street Address</label>
+                    <input asp-for="StreetAddress" class="form-control" placeholder="123 Main Road" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Suburb" class="form-label fw-bold">Suburb</label>
+                    <input asp-for="Suburb" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="City" class="form-label fw-bold">City / Town</label>
+                    <input asp-for="City" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Province" class="form-label fw-bold">Province</label>
+                    <select asp-for="Province" class="form-select">
+                        <option value="">—</option>
+                        @foreach (var p in Enum.GetValues<Employeemanagementpractice.Models.Province>())
+                        {
+                            <option value="@p">@p</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="PostalCode" class="form-label fw-bold">Postal Code</label>
+                    <input asp-for="PostalCode" class="form-control" maxlength="10" />
+                </div>
+            </div>
+
+            <hr class="my-4" />
+            <div class="form-check mb-3">
+                <input type="checkbox" asp-for="SameAsPhysical" class="form-check-input" onchange="togglePostalAddress(this.checked)" />
+                <label asp-for="SameAsPhysical" class="form-check-label">Postal address same as physical address</label>
+            </div>
+
+            <div id="postalAddressBlock" style="@(Model.SameAsPhysical ? "display:none;" : "")">
+                <h6 class="mb-3"><i class="fas fa-mailbox me-2"></i>Postal Address</h6>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="PostalAddress" class="form-label fw-bold">Postal Address</label>
+                        <input asp-for="PostalAddress" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="PostalCity" class="form-label fw-bold">City</label>
+                        <input asp-for="PostalCity" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="PostalProvince" class="form-label fw-bold">Province</label>
+                        <select asp-for="PostalProvince" class="form-select">
+                            <option value="">—</option>
+                            @foreach (var p in Enum.GetValues<Employeemanagementpractice.Models.Province>())
+                            {
+                                <option value="@p">@p</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="PostalPostalCode" class="form-label fw-bold">Postal Code</label>
+                        <input asp-for="PostalPostalCode" class="form-control" maxlength="10" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Qualifications -->
+        <div class="stat-card mb-4 form-section" id="section-qualification" style="display:none;">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-graduation-cap me-2 text-warning"></i>Qualification & Education</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="HighestGradePass" class="form-label fw-bold">Highest Grade Passed</label>
+                    <select asp-for="HighestGradePass" class="form-select">
+                        <option value="">—</option>
+                        @for (int g = 12; g >= 7; g--) { <option>Grade @g</option> }
+                        <option>Below Grade 7</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="QualificationType" class="form-label fw-bold">Qualification Type</label>
+                    <select asp-for="QualificationType" class="form-select">
+                        <option value="">—</option>
+                        <option>Certificate</option><option>Higher Certificate</option><option>Diploma</option><option>Advanced Diploma</option>
+                        <option>Bachelor's Degree</option><option>Honours Degree</option><option>Master's Degree</option><option>Doctoral Degree</option>
+                        <option>National Senior Certificate</option><option>N1-N6</option><option>Learnership</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="QualificationName" class="form-label fw-bold">Qualification Name</label>
+                    <input asp-for="QualificationName" class="form-control" placeholder="e.g. BSc Computer Science" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Institution" class="form-label fw-bold">Institution</label>
+                    <input asp-for="Institution" class="form-control" placeholder="e.g. University of Johannesburg" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="YearCompleted" class="form-label fw-bold">Year Completed</label>
+                    <input asp-for="YearCompleted" type="number" class="form-control" min="1980" max="2030" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="StudentNumber" class="form-label fw-bold">Student Number</label>
+                    <input asp-for="StudentNumber" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="OtherQualifications" class="form-label fw-bold">Other Qualifications / Certifications</label>
+                    <textarea asp-for="OtherQualifications" class="form-control" rows="2" placeholder="List any additional qualifications..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Work Experience -->
+        <div class="stat-card mb-4 form-section" id="section-experience" style="display:none;">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-briefcase me-2 text-success"></i>Work Experience</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="PreviousEmployer" class="form-label fw-bold">Previous Employer</label>
+                    <input asp-for="PreviousEmployer" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="PreviousJobTitle" class="form-label fw-bold">Job Title</label>
+                    <input asp-for="PreviousJobTitle" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="YearsExperience" class="form-label fw-bold">Years Exp.</label>
+                    <input asp-for="YearsExperience" type="number" class="form-control" min="0" max="50" />
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="WorkExperienceDescription" class="form-label fw-bold">Work Experience Description</label>
+                    <textarea asp-for="WorkExperienceDescription" class="form-control" rows="3" placeholder="Describe previous work experience..."></textarea>
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="Skills" class="form-label fw-bold">Skills</label>
+                    <textarea asp-for="Skills" class="form-control" rows="2" placeholder="e.g. Microsoft Office, Communication, Project Management..."></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="DriversLicense" class="form-label fw-bold">Driver's License</label>
+                    <select asp-for="DriversLicense" class="form-select">
+                        <option value="">None</option>
+                        <option>Code A (Motorcycle)</option><option>Code B (Light Motor Vehicle)</option>
+                        <option>Code C (Heavy Motor Vehicle)</option><option>Code EB (Light + Trailer)</option>
+                        <option>Code EC (Heavy + Trailer)</option><option>Learner's License</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Own Transport?</label>
+                    <div class="form-check mt-2">
+                        <input type="checkbox" asp-for="HasOwnTransport" class="form-check-input" />
+                        <label asp-for="HasOwnTransport" class="form-check-label">Yes</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Next of Kin -->
+        <div class="stat-card mb-4 form-section" id="section-nextofkin" style="display:none;">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-users me-2 text-purple" style="color:#6f42c1;"></i>Next of Kin / Emergency Contact</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="NextOfKinName" class="form-label fw-bold">Full Name</label>
+                    <input asp-for="NextOfKinName" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="NextOfKinRelationship" class="form-label fw-bold">Relationship</label>
+                    <select asp-for="NextOfKinRelationship" class="form-select">
+                        <option value="">—</option>
+                        <option>Parent</option><option>Spouse</option><option>Sibling</option>
+                        <option>Child</option><option>Grandparent</option><option>Uncle/Aunt</option>
+                        <option>Cousin</option><option>Friend</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="NextOfKinPhone" class="form-label fw-bold">Phone Number</label>
+                    <div class="input-group"><span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        <input asp-for="NextOfKinPhone" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="NextOfKinAlternativePhone" class="form-label fw-bold">Alternative Phone</label>
+                    <input asp-for="NextOfKinAlternativePhone" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="NextOfKinEmail" class="form-label fw-bold">Email</label>
+                    <input asp-for="NextOfKinEmail" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="NextOfKinAddress" class="form-label fw-bold">Address</label>
+                    <textarea asp-for="NextOfKinAddress" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Bank Details -->
+        <div class="stat-card mb-4 form-section" id="section-bank" style="display:none;">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-university me-2 text-dark"></i>Bank Account Details</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="BankName" class="form-label fw-bold">Bank Name</label>
+                    <select asp-for="BankName" class="form-select">
+                        <option value="">—</option>
+                        <option>ABSA</option><option>African Bank</option><option>Bidvest Bank</option>
+                        <option>Capitec Bank</option><option>Discovery Bank</option><option>First National Bank (FNB)</option>
+                        <option>Investec</option><option>Nedbank</option><option>Standard Bank</option>
+                        <option>TymeBank</option><option>Postbank</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="BankAccountNumber" class="form-label fw-bold">Account Number</label>
+                    <input asp-for="BankAccountNumber" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="AccountType" class="form-label fw-bold">Account Type</label>
+                    <select asp-for="AccountType" class="form-select">
+                        <option value="">—</option>
+                        <option>Savings</option><option>Cheque / Current</option><option>Transmission</option><option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="BankBranchCode" class="form-label fw-bold">Branch Code</label>
+                    <input asp-for="BankBranchCode" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="BranchName" class="form-label fw-bold">Branch Name</label>
+                    <input asp-for="BranchName" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="AccountHolderName" class="form-label fw-bold">Account Holder Name</label>
+                    <input asp-for="AccountHolderName" class="form-control" placeholder="If different from student name" />
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Documents -->
+        <div class="stat-card mb-4 form-section" id="section-documents" style="display:none;">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-file-alt me-2 text-info"></i>Document Uploads</h5>
+            <p class="text-muted small mb-3"><i class="fas fa-info-circle me-1"></i>Upload required documents. ID Copy, Qualification, and Bank Statement are mandatory. Other 4 documents are optional.</p>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="doc-card" onclick="this.querySelector('input[type=file]').click()">
+                        <div class="doc-icon text-danger"><i class="fas fa-id-card"></i></div>
+                        <div class="fw-bold">ID Copy <span class="text-danger">*</span></div>
+                        <small class="text-muted">Required document</small>
+                        <input type="file" asp-for="IDCopyFile" class="form-control mt-2" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="this.parentElement.classList.add('has-file');this.parentElement.querySelector('small').textContent=this.files[0]?.name||'Required document'" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="doc-card" onclick="this.querySelector('input[type=file]').click()">
+                        <div class="doc-icon text-warning"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="fw-bold">Qualification Certificate <span class="text-danger">*</span></div>
+                        <small class="text-muted">Required document</small>
+                        <input type="file" asp-for="QualificationFile" class="form-control mt-2" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="this.parentElement.classList.add('has-file');this.parentElement.querySelector('small').textContent=this.files[0]?.name||'Required document'" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="doc-card" onclick="this.querySelector('input[type=file]').click()">
+                        <div class="doc-icon text-success"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div class="fw-bold">Bank Statement <span class="text-danger">*</span></div>
+                        <small class="text-muted">Required document</small>
+                        <input type="file" asp-for="BankStatementFile" class="form-control mt-2" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="this.parentElement.classList.add('has-file');this.parentElement.querySelector('small').textContent=this.files[0]?.name||'Required document'" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="doc-card" onclick="this.querySelector('input[type=file]').click()">
+                        <div class="doc-icon text-secondary"><i class="fas fa-file"></i></div>
+                        <div class="fw-bold">Other Document 1 <small class="text-muted">(Optional)</small></div>
+                        <small class="text-muted">Click to upload</small>
+                        <input type="file" asp-for="Other1File" class="form-control mt-2" style="display:none;" onchange="this.parentElement.classList.add('has-file');this.parentElement.querySelector('small').textContent=this.files[0]?.name||'Click to upload'" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="doc-card" onclick="this.querySelector('input[type=file]').click()">
+                        <div class="doc-icon text-secondary"><i class="fas fa-file"></i></div>
+                        <div class="fw-bold">Other Document 2 <small class="text-muted">(Optional)</small></div>
+                        <small class="text-muted">Click to upload</small>
+                        <input type="file" asp-for="Other2File" class="form-control mt-2" style="display:none;" onchange="this.parentElement.classList.add('has-file');this.parentElement.querySelector('small').textContent=this.files[0]?.name||'Click to upload'"  />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="doc-card" onclick="this.querySelector('input[type=file]').click()">
+                        <div class="doc-icon text-secondary"><i class="fas fa-file"></i></div>
+                        <div class="fw-bold">Other Document 3 <small class="text-muted">(Optional)</small></div>
+                        <small class="text-muted">Click to upload</small>
+                        <input type="file" asp-for="Other3File" class="form-control mt-2" style="display:none;" onchange="this.parentElement.classList.add('has-file');this.parentElement.querySelector('small').textContent=this.files[0]?.name||'Click to upload'" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="doc-card" onclick="this.querySelector('input[type=file]').click()">
+                        <div class="doc-icon text-secondary"><i class="fas fa-file"></i></div>
+                        <div class="fw-bold">Other Document 4 <small class="text-muted">(Optional)</small></div>
+                        <small class="text-muted">Click to upload</small>
+                        <input type="file" asp-for="Other4File" class="form-control mt-2" style="display:none;" onchange="this.parentElement.classList.add('has-file');this.parentElement.querySelector('small').textContent=this.files[0]?.name||'Click to upload'" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="stat-card mb-4">
+            <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h5>
+            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional notes..."></textarea>
+        </div>
+
+        <!-- Submit -->
+        <div class="d-flex gap-2 mb-5">
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save me-2"></i>@(Model.Id > 0 ? "Update" : "Register") Student</button>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-lg">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function showSection(name) {
+            document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
+            document.getElementById('section-' + name).style.display = 'block';
+            document.querySelectorAll('.step-btn').forEach(b => { b.classList.remove('btn-primary','active'); b.classList.add('btn-outline-primary'); });
+            event.target.classList.remove('btn-outline-primary'); event.target.classList.add('btn-primary','active');
+        }
+        function togglePostalAddress(same) {
+            document.getElementById('postalAddressBlock').style.display = same ? 'none' : 'block';
+        }
+        // Show validation errors
+        document.addEventListener('DOMContentLoaded', function() {
+            var summary = document.querySelector('[data-valmsg-summary]');
+            if (summary && summary.querySelector('li')) { summary.style.display = 'block'; }
+        });
+    </script>
+}

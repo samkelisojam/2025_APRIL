@@ -1,0 +1,64 @@
+@model Employeemanagementpractice.Models.ViewModels.RegisterUserViewModel
+@{ ViewData["Title"] = "Create User"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Users")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Users</a>
+            <h2 class="mt-1"><i class="fas fa-user-plus me-2"></i>Create User</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="stat-card">
+                <form asp-action="CreateUser" method="post">
+                    <div asp-validation-summary="All" class="alert alert-danger" style="display:none;"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label fw-bold">First Name <span class="text-danger">*</span></label>
+                            <input asp-for="FirstName" class="form-control" /><span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label fw-bold">Last Name <span class="text-danger">*</span></label>
+                            <input asp-for="LastName" class="form-control" /><span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                            <input asp-for="Email" class="form-control" /><span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold">Phone</label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                            <input asp-for="Password" class="form-control" /><span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-bold">Confirm Password <span class="text-danger">*</span></label>
+                            <input asp-for="ConfirmPassword" class="form-control" /><span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Role" class="form-label fw-bold">Role</label>
+                            <select asp-for="Role" class="form-select">
+                                @foreach (var r in ViewBag.AllRoles as List<string>)
+                                {
+                                    <option value="@r">@r</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create User</button>
+                        <a href="@Url.Action("Users")" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

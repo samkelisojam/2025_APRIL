@@ -1,0 +1,110 @@
+@model Employeemanagementpractice.Models.ViewModels.TeamLeaderViewModel
+@{ ViewData["Title"] = Model.Id > 0 ? "Edit Team Leader" : "Add Team Leader"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Team Leaders</a>
+            <h2 class="mt-1" style="font-size:1.1rem;"><i class="fas fa-@(Model.Id > 0 ? "edit" : "plus") me-2"></i>@(Model.Id > 0 ? "Edit" : "Add") Team Leader</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="stat-card">
+                <form asp-action="@(Model.Id > 0 ? "Edit" : "Create")" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="UserId" />
+
+                    <div asp-validation-summary="All" class="alert alert-danger" style="display:none;"></div>
+
+                    <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-user me-2 text-primary"></i>Personal Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label fw-bold">First Name <span class="text-danger">*</span></label>
+                            <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label fw-bold">Last Name <span class="text-danger">*</span></label>
+                            <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                @if (Model.Id > 0)
+                                {
+                                    <input asp-for="Email" class="form-control" placeholder="email@example.co.za" readonly="readonly" />
+                                }
+                                else
+                                {
+                                    <input asp-for="Email" class="form-control" placeholder="email@example.co.za" />
+                                }
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold">Phone</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="0XX XXX XXXX" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-briefcase me-2 text-success"></i>Employment Details</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label asp-for="EmployeeNumber" class="form-label fw-bold">Employee Number <span class="text-danger">*</span></label>
+                            <input asp-for="EmployeeNumber" class="form-control" placeholder="EMP001" />
+                            <span asp-validation-for="EmployeeNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Department" class="form-label fw-bold">Department</label>
+                            <input asp-for="Department" class="form-control" placeholder="e.g. Operations" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="MaxStudents" class="form-label fw-bold">Max Students</label>
+                            <input asp-for="MaxStudents" type="number" class="form-control" min="1" max="100" />
+                        </div>
+                    </div>
+
+                    @if (Model.Id == 0)
+                    {
+                        <h5 class="mb-3 pb-2 border-bottom"><i class="fas fa-lock me-2 text-danger"></i>Login Credentials</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label fw-bold">Password</label>
+                                <div class="input-group">
+                                    <input asp-for="Password" class="form-control" placeholder="Leave blank for auto-generated" />
+                                    <button type="button" class="btn btn-outline-secondary" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted">If empty, password will be: TL@@2026!</small>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Team Leader</button>
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Show validation summary if there are errors
+        document.addEventListener('DOMContentLoaded', function() {
+            var summary = document.querySelector('[data-valmsg-summary]');
+            if (summary && summary.querySelector('li')) summary.style.display = 'block';
+        });
+    </script>
+}

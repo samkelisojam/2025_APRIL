@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EMS Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+        var isAdmin = User.IsInRole("Admin");
+        var isManager = User.IsInRole("Manager");
+        var isStaff = User.IsInRole("Staff");
+        var isTeamLeader = User.IsInRole("TeamLeader");
+        var isAdminOrManager = isAdmin || isManager;
+        var isStaffOrAbove = isAdmin || isManager || isStaff;
+
+        <!-- Top Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background:#1e293b;min-height:50px;padding:0 16px;z-index:1050;">
+            <div class="container-fluid px-0">
+                <a class="navbar-brand d-flex align-items-center py-0" href="@Url.Action("Index","Home")" style="font-size:0.95rem;font-weight:700;">
+                    <i class="fas fa-users-cog me-2 text-info"></i>EMS
+                </a>
+                <button class="navbar-toggler border-0 py-1" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" style="font-size:0.85rem;">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-0">
+                        <!-- ── Core ── -->
+                        <li class="nav-item">
+                            <a class="nav-link px-2 @(currentController == "Home" ? "active" : "")" href="@Url.Action("Index","Home")" style="font-size:0.8rem;">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-2 @(currentController == "Student" ? "active" : "")" href="@Url.Action("Index","Student")" style="font-size:0.8rem;">
+                                <i class="fas fa-user-graduate me-1"></i>Students
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-2 @(currentController == "Task" ? "active" : "")" href="@Url.Action("Index","Task")" style="font-size:0.8rem;">
+                                <i class="fas fa-tasks me-1"></i>Tasks
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-2 @(currentController == "Announcement" ? "active" : "")" href="@Url.Action("Index","Announcement")" style="font-size:0.8rem;">
+                                <i class="fas fa-bullhorn me-1"></i>Announcements
+                            </a>
+                        </li>
+
+                        <!-- ── Tools (grouped dropdown) ── -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-2 @(currentController == "Calendar" || currentController == "Training" || currentController == "Attendance" ? "active" : "")" href="#" data-bs-toggle="dropdown" style="font-size:0.8rem;">
+                                <i class="fas fa-th me-1"></i>Tools
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" style="font-size:0.8rem;">
+                                <li><a class="dropdown-item @(currentController == "Calendar" ? "active" : "")" href="@Url.Action("Index","Calendar")"><i class="fas fa-calendar-alt me-2"></i>Calendar</a></li>
+                                <li><a class="dropdown-item @(currentController == "Training" ? "active" : "")" href="@Url.Action("Index","Training")"><i class="fas fa-chalkboard-teacher me-2"></i>Training</a></li>
+                                @if (isTeamLeader || isStaffOrAbove)
+                                {
+                                    <li><a class="dropdown-item @(currentController == "Attendance" ? "active" : "")" href="@Url.Action("Index","Attendance")"><i class="fas fa-user-check me-2"></i>Attendance</a></li>
+                                }
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index","Help")"><i class="fas fa-question-circle me-2"></i>Help Center</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- ── Staff+ menu ── -->
+                        @if (isStaffOrAbove)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle px-2 @(currentController == "TeamLeader" || currentController == "Report" || currentController == "Audit" || currentController == "FileManagement" ? "active" : "")" href="#" data-bs-toggle="dropdown" style="font-size:0.8rem;">
+                                    <i class="fas fa-briefcase me-1"></i>Manage
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark" style="font-size:0.8rem;">
+                                    <li><a class="dropdown-item @(currentController == "TeamLeader" ? "active" : "")" href="@Url.Action("Index","TeamLeader")"><i class="fas fa-user-tie me-2"></i>Team Leaders</a></li>
+                                    <li><a class="dropdown-item @(currentController == "Report" ? "active" : "")" href="@Url.Action("Index","Report")"><i class="fas fa-chart-bar me-2"></i>Reports</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item @(currentController == "Audit" ? "active" : "")" href="@Url.Action("Index","Audit")"><i class="fas fa-history me-2"></i>Audit Log <span class="badge bg-secondary ms-1" style="font-size:0.6rem;">read-only</span></a></li>
+                                    <li><a class="dropdown-item @(currentController == "FileManagement" ? "active" : "")" href="@Url.Action("Index","FileManagement")"><i class="fas fa-folder-open me-2"></i>File Management</a></li>
+                                </ul>
+                            </li>
+                        }
+
+                        <!-- ── Admin/Manager panel ── -->
+                        @if (isAdminOrManager)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle px-2 text-warning @(currentController == "Settings" || currentController == "Payroll" || currentController == "Import" || currentController == "Backup" || currentController == "System" || currentController == "Activity" ? "active" : "")" href="#" data-bs-toggle="dropdown" style="font-size:0.8rem;">
+                                    <i class="fas fa-cog me-1"></i>Admin
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark" style="font-size:0.8rem;">
+                                    <li><h6 class="dropdown-header" style="font-size:0.65rem;color:#94a3b8;"><i class="fas fa-users-cog me-1"></i>Users & Access</h6></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Users","Settings")"><i class="fas fa-users-cog me-2"></i>System Users</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("AccessControl","Settings")"><i class="fas fa-shield-alt me-2"></i>Access Control</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><h6 class="dropdown-header" style="font-size:0.65rem;color:#94a3b8;"><i class="fas fa-money-bill me-1"></i>Finance & Data</h6></li>
+                                    <li><a class="dropdown-item @(currentController == "Payroll" ? "active" : "")" href="@Url.Action("Index","Payroll")"><i class="fas fa-money-bill-wave me-2"></i>Payroll</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","Import")"><i class="fas fa-file-import me-2"></i>Batch Import</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","Backup")"><i class="fas fa-database me-2"></i>Backup</a></li>
+                                    @if (isAdmin)
+                                    {
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <li><h6 class="dropdown-header" style="font-size:0.65rem;color:#94a3b8;"><i class="fas fa-server me-1"></i>System</h6></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Index","System")"><i class="fas fa-heartbeat me-2"></i>System Health</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Index","Activity")"><i class="fas fa-user-clock me-2"></i>Staff Activity</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- Right side: Search, Notifications, User + Logout -->
+                    <div class="d-flex align-items-center gap-1">
+                        <!-- Global Search -->
+                        <div class="position-relative d-none d-xl-block" style="width:180px;">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-dark border-secondary border-end-0" style="padding:2px 8px;"><i class="fas fa-search text-muted" style="font-size:0.7rem;"></i></span>
+                                <input type="text" id="globalSearch" class="form-control form-control-sm bg-dark text-light border-secondary border-start-0" placeholder="Search..." autocomplete="off" style="font-size:0.75rem;padding:2px 8px;" />
+                            </div>
+                            <div id="globalSearchResults" class="position-absolute top-100 start-0 w-100 bg-white shadow rounded-bottom border d-none" style="z-index:9999;max-height:400px;overflow-y:auto;"></div>
+                        </div>
+                        <!-- Online Users -->
+                        <button class="btn btn-link text-light position-relative p-1" data-bs-toggle="offcanvas" data-bs-target="#onlineUsersPanel" title="Online Users" style="font-size:0.8rem;">
+                            <i class="fas fa-circle text-success" style="font-size:6px;position:absolute;top:2px;right:0;"></i>
+                            <i class="fas fa-users"></i>
+                            <span class="badge bg-success ms-1" id="onlineCount" style="font-size:0.6rem;padding:2px 4px;">0</span>
+                        </button>
+                        <!-- Notifications -->
+                        <div class="dropdown">
+                            <button class="btn btn-link text-light p-1" data-bs-toggle="dropdown" style="font-size:0.8rem;" title="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge bg-danger notification-badge" id="notificationBadge" style="display:none;font-size:0.55rem;">0</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end p-3" style="width:280px;font-size:0.8rem;" id="notificationDropdown">
+                                <h6 class="mb-2" style="font-size:0.85rem;"><i class="fas fa-bell me-1"></i>Notifications</h6>
+                                <div id="notificationList"><p class="text-muted small mb-0">No new notifications</p></div>
+                            </div>
+                        </div>
+                        <!-- User info dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-link text-light p-1 d-flex align-items-center" data-bs-toggle="dropdown" style="font-size:0.78rem;text-decoration:none;" title="@User.Identity?.Name">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span class="d-none d-lg-inline" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@User.Identity?.Name</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" style="font-size:0.78rem;min-width:220px;">
+                                <li><span class="dropdown-item-text" style="font-size:0.73rem;"><i class="fas fa-envelope me-2 text-muted"></i>@User.Identity?.Name</span></li>
+                                <li><span class="dropdown-item-text" style="font-size:0.7rem;"><i class="fas fa-id-badge me-2 text-muted"></i>Role: <strong>@(isAdmin ? "Admin" : isManager ? "Manager" : isStaff ? "Staff" : isTeamLeader ? "Team Leader" : "Read Only")</strong></span></li>
+                                <li><hr class="dropdown-divider my-1" /></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index","Help")" style="font-size:0.75rem;"><i class="fas fa-question-circle me-2 text-muted"></i>Help</a></li>
+                                <li><hr class="dropdown-divider my-1" /></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="px-0">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger fw-bold" style="font-size:0.78rem;"><i class="fas fa-sign-out-alt me-2"></i>Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- VISIBLE Logout button (always shown) -->
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline ms-1">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size:0.72rem;line-height:1.6;" title="Logout">
+                                <i class="fas fa-sign-out-alt me-1"></i><span class="d-none d-md-inline">Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main content (no sidebar) -->
+        <div class="main-content-topnav" id="mainContent">
+            <!-- Page content -->
+            <div class="content-wrapper">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show py-2" role="alert" style="font-size:0.8rem;">
+                        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show py-2" role="alert" style="font-size:0.8rem;">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @RenderBody()
+            </div>
+
+            <!-- Footer -->
+            <footer class="text-center py-2 text-muted border-top mt-4" style="background:#f8fafc;font-size:0.7rem;">
+                <i class="fas fa-shield-alt me-1 text-primary"></i> EMS Portal &copy; @DateTime.Now.Year
+                <span class="mx-1">|</span> ASP.NET Core 8.0
+                <span class="mx-1">|</span> SQL Server
+            </footer>
+        </div>
+
+        <!-- Online Users Offcanvas Panel -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="onlineUsersPanel" style="width:280px;">
+            <div class="offcanvas-header bg-dark text-white py-2">
+                <h6 class="offcanvas-title mb-0" style="font-size:0.85rem;"><i class="fas fa-users me-2"></i>Online Users <span class="badge bg-success ms-2" id="onlineCountPanel" style="font-size:0.65rem;">0</span></h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body p-0">
+                <div id="onlineUsersList" class="list-group list-group-flush">
+                    <div class="text-center py-4 text-muted" style="font-size:0.8rem;">
+                        <i class="fas fa-spinner fa-spin me-1"></i> Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden user info for SignalR -->
+        <input type="hidden" id="currentUserFullName" value="@User.Identity?.Name" />
+        <input type="hidden" id="currentUserRole" value="@(isAdmin ? "Admin" : isManager ? "Manager" : isTeamLeader ? "TeamLeader" : isStaff ? "Staff" : "ReadOnly")" />
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" style="display:none;">
+            <div class="spinner-container">
+                <div class="spinner-border text-primary" style="width:2.5rem;height:2.5rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-primary fw-bold" style="font-size:0.8rem;">Processing...</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container-fluid p-0">
+            @RenderBody()
+        </div>
+    }
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

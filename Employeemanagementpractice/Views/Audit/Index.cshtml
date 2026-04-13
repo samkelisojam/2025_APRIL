@@ -1,0 +1,96 @@
+@model List<Employeemanagementpractice.Models.AuditLog>
+@{ ViewData["Title"] = "Audit Log"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-history me-2"></i>Audit Log</h2>
+        <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('auditTable','Audit Log')"><i class="fas fa-file-pdf me-1"></i>Export PDF</button>
+    </div>
+
+    <div class="filter-bar">
+        <form method="get" class="row g-2 align-items-end no-loading">
+            <div class="col-md-3">
+                <input type="text" name="search" class="form-control" placeholder="Search user, description..." value="@ViewBag.Search" />
+            </div>
+            <div class="col-md-2">
+                <select name="action" class="form-select">
+                    <option value="">All Actions</option>
+                    @if (ViewBag.Actions != null)
+                    {
+                        @foreach (var a in ViewBag.Actions as List<string>)
+                        {
+                            if (ViewBag.Action == a) { <option value="@a" selected="selected">@a</option> }
+                            else { <option value="@a">@a</option> }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="entityType" class="form-select">
+                    <option value="">All Entities</option>
+                    @if (ViewBag.EntityTypes != null)
+                    {
+                        @foreach (var e in ViewBag.EntityTypes as List<string>)
+                        {
+                            if (ViewBag.EntityType == e) { <option value="@e" selected="selected">@e</option> }
+                            else { <option value="@e">@e</option> }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-1">
+                <input type="date" name="from" class="form-control form-control-sm" value="@ViewBag.From" placeholder="From" />
+            </div>
+            <div class="col-md-1">
+                <input type="date" name="to" class="form-control form-control-sm" value="@ViewBag.To" placeholder="To" />
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100 btn-sm"><i class="fas fa-filter"></i></button>
+            </div>
+            <div class="col-md-1">
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary w-100 btn-sm"><i class="fas fa-times"></i></a>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-hover table-sm" id="auditTable">
+            <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th>Entity ID</th><th>Description</th><th>IP</th></tr></thead>
+            <tbody>
+                @foreach (var log in Model)
+                {
+                    var rowClass = log.Action?.ToLower() switch { "create" => "audit-action-create", "update" => "audit-action-update", "delete" => "audit-action-delete", "login" or "loginsuccessful" => "audit-action-login", _ => "" };
+                    var actionBadge = log.Action?.ToLower() switch { "create" => "bg-success", "update" => "bg-warning text-dark", "delete" => "bg-danger", _ => "bg-info" };
+                    <tr class="@rowClass">
+                        <td><small>@log.Timestamp.ToString("dd/MM/yy HH:mm")</small></td>
+                        <td><small class="fw-bold">@(log.UserName ?? "System")</small></td>
+                        <td><span class="badge @actionBadge badge-status">@log.Action</span></td>
+                        <td><small>@(log.EntityType ?? "—")</small></td>
+                        <td><code class="small">@(log.EntityId ?? "—")</code></td>
+                        <td><small>@(log.Description?.Length > 80 ? log.Description.Substring(0,80) + "..." : log.Description ?? "—")</small></td>
+                        <td><small class="text-muted">@(log.IpAddress ?? "—")</small></td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-5"><i class="fas fa-history fa-3x mb-3 d-block opacity-25"></i>No audit logs found.</td></tr>
+                }
+            </tbody>
+        </table>
+
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+                <span class="text-muted small">Page @ViewBag.Page of @ViewBag.TotalPages (@ViewBag.TotalCount)</span>
+                <nav><ul class="pagination pagination-sm mb-0">
+                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == (int)ViewBag.Page ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index",new{page=i,search=ViewBag.Search,action=ViewBag.Action,entityType=ViewBag.EntityType,from=ViewBag.From,to=ViewBag.To})">@i</a>
+                        </li>
+                    }
+                </ul></nav>
+            </div>
+        }
+    </div>
+</div>

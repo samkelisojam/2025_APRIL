@@ -1,0 +1,118 @@
+@model Employeemanagementpractice.Models.ViewModels.AccessControlViewModel
+@{ ViewData["Title"] = "Access Control"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-shield-alt me-2"></i>Access Control</h2>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createRoleModal"><i class="fas fa-plus me-1"></i>Create Role</button>
+    </div>
+
+    @Html.AntiForgeryToken()
+
+    <!-- Tabs for each role -->
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        @for (int i = 0; i < Model.AllRoles.Count; i++)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(i == 0 ? "active" : "")" data-bs-toggle="tab" href="#role-@Model.AllRoles[i].Replace(" ","_")">
+                    <i class="fas fa-user-shield me-1"></i>@Model.AllRoles[i]
+                </a>
+            </li>
+        }
+    </ul>
+
+    <div class="tab-content">
+        @for (int i = 0; i < Model.RolePermissions.Count; i++)
+        {
+            var rp = Model.RolePermissions[i];
+            <div class="tab-pane fade @(i == 0 ? "show active" : "")" id="role-@rp.RoleName.Replace(" ","_")">
+                <div class="table-container">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Permission</th>
+                                <th>Category</th>
+                                <th class="text-center">View</th>
+                                <th class="text-center">Create</th>
+                                <th class="text-center">Edit</th>
+                                <th class="text-center">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var perm in Model.AllPermissions)
+                            {
+                                var existing = rp.Permissions.FirstOrDefault(x => x.PermissionId == perm.Id);
+                                <tr>
+                                    <td class="fw-bold"><i class="fas fa-key me-1 text-warning"></i>@perm.Name</td>
+                                    <td><span class="badge bg-light text-dark">@perm.Category</span></td>
+                                    <td class="text-center">
+                                        <div class="form-check d-inline-block">
+                                            <input type="checkbox" class="form-check-input perm-view" @(existing?.CanView == true ? "checked" : "")
+                                                   onchange="updatePermission('@rp.RoleName', @perm.Id, this)" />
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check d-inline-block">
+                                            <input type="checkbox" class="form-check-input perm-create" @(existing?.CanCreate == true ? "checked" : "")
+                                                   onchange="updatePermission('@rp.RoleName', @perm.Id, this)" />
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check d-inline-block">
+                                            <input type="checkbox" class="form-check-input perm-edit" @(existing?.CanEdit == true ? "checked" : "")
+                                                   onchange="updatePermission('@rp.RoleName', @perm.Id, this)" />
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check d-inline-block">
+                                            <input type="checkbox" class="form-check-input perm-delete" @(existing?.CanDelete == true ? "checked" : "")
+                                                   onchange="updatePermission('@rp.RoleName', @perm.Id, this)" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Role Modal -->
+<div class="modal fade" id="createRoleModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Create Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label fw-bold">Role Name</label>
+                <input type="text" id="newRoleName" class="form-control" placeholder="Enter role name" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" onclick="createRole()"><i class="fas fa-save me-1"></i>Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function createRole() {
+    var name = document.getElementById('newRoleName').value.trim();
+    if (!name) return;
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    fetch('@Url.Action("CreateRole")', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
+        body: new URLSearchParams({ roleName: name })
+    }).then(r => r.json()).then(d => {
+        if (d.success) { showToast('Role created!'); setTimeout(() => location.reload(), 1000); }
+        else alert(d.error || 'Error');
+    });
+}
+</script>
+}

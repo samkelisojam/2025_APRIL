@@ -1,0 +1,73 @@
+@{ ViewData["Title"] = "System Health"; }
+
+<h4 class="fw-bold mb-4"><i class="fas fa-heartbeat text-danger me-2"></i>System Health Monitor</h4>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center" id="dbCard"><i class="fas fa-database fa-2x mb-2"></i><h6 class="text-muted">Database</h6><span class="badge fs-6" id="dbStatus">Checking...</span></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center"><i class="fas fa-server fa-2x text-info mb-2"></i><h6 class="text-muted">Server</h6><span class="fw-bold" id="serverName">-</span></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center"><i class="fas fa-clock fa-2x text-warning mb-2"></i><h6 class="text-muted">Uptime</h6><span class="fw-bold" id="uptime">-</span></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center"><i class="fas fa-code-branch fa-2x text-success mb-2"></i><h6 class="text-muted">Framework</h6><span class="fw-bold" id="framework">-</span></div></div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-chart-pie me-1"></i>Entity Counts</div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light"><tr><th>Entity</th><th>Count</th><th>Visual</th></tr></thead>
+                    <tbody id="entityTable"><tr><td colspan="3" class="text-center text-muted py-3">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-hdd me-1"></i>Storage</div>
+            <div class="card-body text-center">
+                <div class="display-4 fw-bold text-primary" id="diskUsage">-</div>
+                <p class="text-muted mb-0">Disk usage</p>
+            </div>
+        </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-info-circle me-1"></i>Server Info</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0" id="serverInfo"><tr><td colspan="2" class="text-center text-muted py-3">Loading...</td></tr></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center"><button class="btn btn-outline-primary" onclick="loadHealth()"><i class="fas fa-sync-alt me-1"></i>Refresh</button></div>
+
+@section Scripts {
+<script>
+async function loadHealth() {
+    try {
+        const res = await fetch('/System/HealthJson'); const h = await res.json();
+        document.getElementById('dbStatus').textContent = h.databaseStatus || 'Unknown';
+        document.getElementById('dbStatus').className = 'badge fs-6 ' + (h.databaseStatus === 'Connected' ? 'bg-success' : 'bg-danger');
+        document.getElementById('dbCard').querySelector('i').className = 'fas fa-database fa-2x mb-2 ' + (h.databaseStatus === 'Connected' ? 'text-success' : 'text-danger');
+        document.getElementById('serverName').textContent = h.serverName || '-';
+        document.getElementById('uptime').textContent = h.uptime || '-';
+        document.getElementById('framework').textContent = h.frameworkVersion || '.NET 8';
+        document.getElementById('diskUsage').textContent = h.diskUsage || '-';
+
+        const icons = { Users:'fa-users', Students:'fa-user-graduate', TeamLeaders:'fa-user-tie', Tasks:'fa-tasks', Announcements:'fa-bullhorn', PayrollRecords:'fa-money-bill-wave', AuditLogs:'fa-clipboard-list', Documents:'fa-file-alt', TrainingCourses:'fa-chalkboard-teacher', CalendarEvents:'fa-calendar', AttendanceRecords:'fa-user-check', Backups:'fa-database' };
+        const colors = ['primary','success','info','warning','danger','secondary','dark','primary','success','info','warning','danger'];
+        if (h.entityCounts) {
+            const entries = Object.entries(h.entityCounts); const max = Math.max(...entries.map(([,v])=>v), 1);
+            document.getElementById('entityTable').innerHTML = entries.map(([k,v], i) => {
+                const pct = Math.round(v / max * 100); const c = colors[i % colors.length];
+                return `<tr><td><i class="fas ${icons[k]||'fa-circle'} text-${c} me-2"></i>${k}</td><td class="fw-bold">${v}</td>
+                <td style="width:50%"><div class="progress" style="height:20px;"><div class="progress-bar bg-${c}" style="width:${pct}%">${v}</div></div></td></tr>`;
+            }).join('');
+        }
+        if (h.serverInfo) {
+            document.getElementById('serverInfo').innerHTML = Object.entries(h.serverInfo).map(([k,v]) => `<tr><td class="fw-bold text-muted">${k}</td><td>${v}</td></tr>`).join('');
+        }
+    } catch(e) { showToast('Error loading health data: ' + e.message, 'danger'); }
+}
+loadHealth();
+</script>
+}

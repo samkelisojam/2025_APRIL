@@ -1,0 +1,124 @@
+@model Employeemanagementpractice.Models.TeamLeader
+@{ ViewData["Title"] = Model.User.FullName + " - Team Leader"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Team Leaders</a>
+            <h2 class="mt-1"><i class="fas fa-user-tie me-2 text-primary"></i>@Model.User.FullName</h2>
+        </div>
+        <div>
+            <a href="@Url.Action("Students", new { id = Model.Id })" class="btn btn-outline-primary me-2"><i class="fas fa-users me-1"></i>View Students</a>
+            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning"><i class="fas fa-edit me-1"></i>Edit</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Profile Card -->
+        <div class="col-md-4">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center" style="width:80px;height:80px;">
+                        <i class="fas fa-user-tie fa-2x text-primary"></i>
+                    </div>
+                    <h4 class="mt-3 mb-1">@Model.User.FullName</h4>
+                    <p class="mb-0 opacity-75">@(Model.Department ?? "No department")</p>
+                </div>
+                <div class="profile-body">
+                    <div class="info-group">
+                        <div class="info-label">Employee Number</div>
+                        <div class="info-value">@Model.EmployeeNumber</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Email</div>
+                        <div class="info-value"><a href="mailto:@Model.User.Email">@Model.User.Email</a></div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">@(Model.User.PhoneNumber ?? "—")</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Date Joined</div>
+                        <div class="info-value">@Model.DateJoined.ToString("dd MMMM yyyy")</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Status</div>
+                        <div class="info-value"><span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">@(Model.IsActive ? "Active" : "Inactive")</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students List -->
+        <div class="col-md-8">
+            @{
+                var activeStudents = Model.Students.Where(x => x.IsActive).ToList();
+                var pct = Model.MaxStudents > 0 ? (int)((double)activeStudents.Count / Model.MaxStudents * 100) : 0;
+            }
+            <div class="stat-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="fas fa-users me-2 text-primary"></i>Students (@activeStudents.Count / @Model.MaxStudents)</h5>
+                    <a href="@Url.Action("Create","Student", new { teamLeaderId = Model.Id })" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>Add Student</a>
+                </div>
+                <div class="progress" style="height:8px;">
+                    <div class="progress-bar @(pct >= 90 ? "bg-danger" : pct >= 70 ? "bg-warning" : "bg-success")" style="width:@pct%"></div>
+                </div>
+                <small class="text-muted mt-1 d-block">@pct% capacity used</small>
+            </div>
+
+            <div class="table-container">
+                <table class="table table-hover mb-0" id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>SA ID</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in activeStudents)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("Profile","Student", new { id = s.Id })" class="text-decoration-none fw-bold">
+                                        <i class="fas fa-user-graduate me-1 text-success"></i>@s.FullName
+                                    </a>
+                                </td>
+                                <td><code>@s.SAIDNumber</code></td>
+                                <td><small>@(s.Email ?? "—")</small></td>
+                                <td>@(s.Phone ?? "—")</td>
+                                <td>@(s.City ?? "—")</td>
+                                <td>
+                                    <a href="@Url.Action("Profile","Student", new { id = s.Id })" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!activeStudents.Any())
+                        {
+                            <tr><td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-user-graduate fa-2x mb-2 d-block opacity-25"></i>
+                                No students assigned yet.
+                                <a href="@Url.Action("Create","Student", new { teamLeaderId = Model.Id })">Add a student</a>
+                            </td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Export -->
+            <div class="mt-3">
+                <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('studentsTable','@Model.User.FullName - Students Report')">
+                    <i class="fas fa-file-pdf me-1"></i>Export PDF
+                </button>
+                <a href="@Url.Action("ExportStudentsExcel","Report", new { teamLeaderId = Model.Id })" class="btn btn-success btn-sm">
+                    <i class="fas fa-file-excel me-1"></i>Export Excel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

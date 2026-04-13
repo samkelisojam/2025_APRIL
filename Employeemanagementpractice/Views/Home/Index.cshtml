@@ -1,0 +1,157 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var role = ViewBag.UserRole as string ?? "ReadOnly";
+    var isAdmin = role == "Admin";
+    var isManager = role == "Manager";
+    var isAdminOrManager = isAdmin || isManager;
+    var isTeamLeader = role == "TeamLeader";
+}
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <h2 style="font-size:1.1rem;"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+            <span class="text-muted" style="font-size:0.75rem;">Welcome back! Here's your overview.</span>
+        </div>
+        @if (isTeamLeader)
+        {
+            <span class="badge bg-info" style="font-size:0.7rem;"><i class="fas fa-user-tie me-1"></i>Team Leader View</span>
+        }
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-3">
+        <div class="col-xl-3 col-md-6 col-sm-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Team Leaders</div>
+                        <div class="stat-value">@Model.TotalTeamLeaders</div>
+                    </div>
+                    <div class="stat-icon" style="background:#dbeafe;color:#0d6efd;">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 col-sm-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Active Students</div>
+                        <div class="stat-value">@Model.ActiveStudents</div>
+                    </div>
+                    <div class="stat-icon" style="background:#dcfce7;color:#16a34a;">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                </div>
+                <small class="text-muted" style="font-size:0.65rem;">of @Model.TotalStudents total</small>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 col-sm-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Pending Tasks</div>
+                        <div class="stat-value">@Model.PendingTasks</div>
+                    </div>
+                    <div class="stat-icon" style="background:#fef3c7;color:#d97706;">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (isAdminOrManager)
+        {
+            <div class="col-xl-3 col-md-6 col-sm-6">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label">Payroll Total</div>
+                            <div class="stat-value">R @Model.TotalPayrollAmount.ToString("N0")</div>
+                        </div>
+                        <div class="stat-icon" style="background:#fce7f3;color:#db2777;">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                    </div>
+                    <small class="text-muted" style="font-size:0.65rem;">@Model.TotalPayrollRecords records</small>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row g-3">
+        <!-- Team Leader Summary -->
+        <div class="col-lg-8">
+            <div class="table-container">
+                <div class="p-2 px-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0" style="font-size:0.85rem;"><i class="fas fa-user-tie me-2 text-primary"></i>Team Leaders Overview</h6>
+                    @if (!isTeamLeader)
+                    {
+                        <a href="@Url.Action("Index","TeamLeader")" class="btn btn-sm btn-outline-primary" style="font-size:0.7rem;padding:2px 8px;">View All</a>
+                    }
+                </div>
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr><th>Name</th><th>Department</th><th>Students</th><th>Capacity</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var tl in Model.TeamLeaderSummaries)
+                        {
+                            var pct = tl.MaxStudents > 0 ? (int)((double)tl.StudentCount / tl.MaxStudents * 100) : 0;
+                            var barColor = pct >= 90 ? "bg-danger" : pct >= 70 ? "bg-warning" : "bg-success";
+                            <tr style="cursor:pointer;" onclick="location.href='@Url.Action("Details","TeamLeader",new{id=tl.TeamLeaderId})'">
+                                <td><i class="fas fa-user-tie me-1 text-primary"></i>@tl.Name</td>
+                                <td>@tl.Department</td>
+                                <td>@tl.StudentCount / @tl.MaxStudents</td>
+                                <td style="min-width:120px;">
+                                    <div class="progress progress-thin"><div class="progress-bar @barColor" style="width:@pct%"></div></div>
+                                    <small class="text-muted" style="font-size:0.65rem;">@pct%</small>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.TeamLeaderSummaries.Any())
+                        {
+                            <tr><td colspan="4" class="text-center text-muted py-3" style="font-size:0.78rem;"><i class="fas fa-info-circle me-2"></i>No team leaders found.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="table-container mb-3">
+                <div class="p-2 px-3 border-bottom"><h6 class="mb-0" style="font-size:0.85rem;"><i class="fas fa-bullhorn me-2 text-warning"></i>Announcements</h6></div>
+                <div class="p-2 px-3">
+                    @foreach (var ann in Model.RecentAnnouncements)
+                    {
+                        <div class="mb-2 pb-2 border-bottom">
+                            <strong style="font-size:0.78rem;">@ann.Title</strong><br />
+                            <span class="text-muted" style="font-size:0.7rem;">@ann.Message.Substring(0, Math.Min(80, ann.Message.Length))...</span><br />
+                            <small class="text-muted" style="font-size:0.65rem;"><i class="fas fa-clock me-1"></i>@ann.CreatedAt.ToString("dd MMM yyyy")</small>
+                        </div>
+                    }
+                    @if (!Model.RecentAnnouncements.Any()) { <p class="text-muted text-center mb-0" style="font-size:0.73rem;">No announcements</p> }
+                </div>
+            </div>
+            <div class="table-container">
+                <div class="p-2 px-3 border-bottom"><h6 class="mb-0" style="font-size:0.85rem;"><i class="fas fa-tasks me-2 text-info"></i>Recent Tasks</h6></div>
+                <div class="p-2 px-3">
+                    @foreach (var task in Model.RecentTasks)
+                    {
+                        var statusBadge = task.Status switch { Employeemanagementpractice.Models.TaskStatus.New => "bg-secondary", Employeemanagementpractice.Models.TaskStatus.InProgress => "bg-primary", Employeemanagementpractice.Models.TaskStatus.Completed => "bg-success", _ => "bg-warning" };
+                        <div class="mb-2 pb-2 border-bottom d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="@Url.Action("Details","Task",new{id=task.Id})" class="text-decoration-none fw-bold" style="font-size:0.78rem;">@task.Title</a><br />
+                                <small class="text-muted" style="font-size:0.65rem;">@task.AssignedTo?.FullName</small>
+                            </div>
+                            <span class="badge @statusBadge badge-status">@task.Status</span>
+                        </div>
+                    }
+                    @if (!Model.RecentTasks.Any()) { <p class="text-muted text-center mb-0" style="font-size:0.73rem;">No tasks</p> }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

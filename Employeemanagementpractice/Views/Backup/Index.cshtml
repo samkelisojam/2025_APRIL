@@ -1,0 +1,89 @@
+@{ ViewData["Title"] = "Database Backup"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="fas fa-database text-primary me-2"></i>Database Backup</h4>
+    <button class="btn btn-success" id="btnCreateBackup"><i class="fas fa-download me-1"></i>Create Backup Now</button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3">
+            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+            <h6 class="text-muted">Backup Status</h6>
+            <span class="badge bg-success fs-6" id="backupStatus">Healthy</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3">
+            <i class="fas fa-clock fa-2x text-info mb-2"></i>
+            <h6 class="text-muted">Last Backup</h6>
+            <span class="fw-bold" id="lastBackup">Loading...</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3">
+            <i class="fas fa-archive fa-2x text-warning mb-2"></i>
+            <h6 class="text-muted">Total Backups</h6>
+            <span class="fw-bold fs-4" id="totalBackups">0</span>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white fw-bold"><i class="fas fa-history me-1"></i>Backup History</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light"><tr><th>Date</th><th>File Name</th><th>Type</th><th>Size</th><th>Status</th><th>Created By</th><th>Actions</th></tr></thead>
+                <tbody id="backupTable"><tr><td colspan="7" class="text-center text-muted py-4">Loading backups...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="backupModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Create Backup</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <div class="mb-3"><label class="form-label fw-bold">Backup Type</label>
+            <select id="backupType" class="form-select"><option value="Full">Full Database Backup</option><option value="Excel">Excel Export</option></select>
+        </div>
+        <div class="mb-3"><label class="form-label fw-bold">Notes</label><textarea id="backupNotes" class="form-control" rows="2" placeholder="Optional notes..."></textarea></div>
+        <div class="progress d-none" id="backupProgress"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%">Processing...</div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-success" id="confirmBackup"><i class="fas fa-download me-1"></i>Start Backup</button></div>
+</div></div></div>
+
+@section Scripts {
+<script>
+document.getElementById('btnCreateBackup').addEventListener('click', () => new bootstrap.Modal(document.getElementById('backupModal')).show());
+document.getElementById('confirmBackup').addEventListener('click', async function() {
+    this.disabled = true;
+    document.getElementById('backupProgress').classList.remove('d-none');
+    try {
+        const res = await fetch('/Backup/Create', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ type: document.getElementById('backupType').value, notes: document.getElementById('backupNotes').value }) });
+        const data = await res.json();
+        if (data.success) { bootstrap.Modal.getInstance(document.getElementById('backupModal')).hide(); loadBackups(); showToast('Backup created successfully!', 'success'); }
+        else showToast(data.message || 'Backup failed', 'danger');
+    } catch(e) { showToast('Error: ' + e.message, 'danger'); }
+    finally { this.disabled = false; document.getElementById('backupProgress').classList.add('d-none'); }
+});
+async function loadBackups() {
+    try {
+        const res = await fetch('/Backup/Index?handler=json');
+        if (!res.ok) { /* fallback - just reload */ location.reload(); return; }
+        const backups = await res.json();
+        const tb = document.getElementById('backupTable');
+        if (!backups.length) { tb.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No backups yet</td></tr>'; document.getElementById('totalBackups').textContent = '0'; document.getElementById('lastBackup').textContent = 'Never'; return; }
+        document.getElementById('totalBackups').textContent = backups.length;
+        document.getElementById('lastBackup').textContent = new Date(backups[0].createdAt).toLocaleString();
+        document.getElementById('backupStatus').textContent = backups[0].status === 'Completed' ? 'Healthy' : 'Warning';
+        document.getElementById('backupStatus').className = 'badge fs-6 ' + (backups[0].status === 'Completed' ? 'bg-success' : 'bg-warning');
+        tb.innerHTML = backups.map(b => `<tr>
+            <td>${new Date(b.createdAt).toLocaleString()}</td><td>${b.fileName}</td><td><span class="badge bg-info">${b.backupType}</span></td>
+            <td>${(b.fileSizeBytes/1024/1024).toFixed(2)} MB</td><td><span class="badge ${b.status==='Completed'?'bg-success':'bg-danger'}">${b.status}</span></td>
+            <td>${b.createdBy||'System'}</td><td><a href="/Backup/Download?id=${b.id}" class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></a></td></tr>`).join('');
+    } catch(e) { console.log('Could not load backups via JSON'); }
+}
+loadBackups();
+</script>
+}

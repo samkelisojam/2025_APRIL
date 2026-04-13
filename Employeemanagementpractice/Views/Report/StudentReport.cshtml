@@ -1,0 +1,76 @@
+@model List<Employeemanagementpractice.Models.Student>
+@{ ViewData["Title"] = "Student Report"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Reports</a>
+            <h2 class="mt-1"><i class="fas fa-user-graduate me-2"></i>Student Report</h2>
+        </div>
+        <div>
+            <a href="@Url.Action("ExportStudentsExcel",new{teamLeaderId=ViewBag.TeamLeaderId})" class="btn btn-success btn-sm"><i class="fas fa-file-excel me-1"></i>Export Excel</a>
+            <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('reportTable','Student Report')"><i class="fas fa-file-pdf me-1"></i>Export PDF</button>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <form method="get" class="row g-2 align-items-end no-loading">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search..." value="@ViewBag.Search" />
+            </div>
+            <div class="col-md-3">
+                <select name="teamLeaderId" class="form-select">
+                    <option value="">All Team Leaders</option>
+                    @foreach (var tl in ViewBag.TeamLeaders as List<Employeemanagementpractice.Models.TeamLeader>)
+                    {
+                        if (ViewBag.TeamLeaderId?.ToString() == tl.Id.ToString()) { <option value="@tl.Id" selected="selected">@tl.User.FullName</option> }
+                        else { <option value="@tl.Id">@tl.User.FullName</option> }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>Filter</button></div>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-hover table-sm" id="reportTable">
+            <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>SA ID</th><th>Gender</th><th>Email</th><th>Phone</th>
+                    <th>City</th><th>Province</th><th>Qualification</th><th>Team Leader</th><th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@s.Id</td>
+                        <td class="fw-bold">@s.FullName</td>
+                        <td><code class="small">@s.SAIDNumber</code></td>
+                        <td>@s.Gender</td>
+                        <td><small>@(s.Email ?? "")</small></td>
+                        <td>@(s.Phone ?? "")</td>
+                        <td>@(s.City ?? "")</td>
+                        <td>@(s.Province?.ToString() ?? "")</td>
+                        <td><small>@(s.QualificationName ?? "")</small></td>
+                        <td>@s.TeamLeader?.User?.FullName</td>
+                        <td>@s.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+                <span class="text-muted small">Page @ViewBag.Page of @ViewBag.TotalPages (@ViewBag.TotalCount total)</span>
+                <nav><ul class="pagination pagination-sm mb-0">
+                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == (int)ViewBag.Page ? "active" : "")"><a class="page-link" href="@Url.Action("StudentReport",new{page=i,search=ViewBag.Search,teamLeaderId=ViewBag.TeamLeaderId})">@i</a></li>
+                    }
+                </ul></nav>
+            </div>
+        }
+    </div>
+</div>

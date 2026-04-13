@@ -1,0 +1,130 @@
+@model List<Employeemanagementpractice.Models.PayrollRecord>
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{ ViewData["Title"] = "Payroll"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-money-bill-wave me-2"></i>Payroll</h2>
+        <a href="@Url.Action("Create")" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Payment</a>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+        <form method="get" class="row g-2 align-items-end no-loading">
+            <div class="col-md-3">
+                <select name="studentId" class="form-select form-select-sm">
+                    <option value="">All Students</option>
+                    @foreach (var s in ViewBag.Students as List<SelectListItem>)
+                    {
+                        if (ViewBag.StudentId?.ToString() == s.Value) { <option value="@s.Value" selected="selected">@s.Text</option> }
+                        else { <option value="@s.Value">@s.Text</option> }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="payPeriod" class="form-select form-select-sm">
+                    <option value="">All Periods</option>
+                    @foreach (var p in ViewBag.PayPeriods as List<string>)
+                    {
+                        if (ViewBag.PayPeriod == p) { <option value="@p" selected="selected">@p</option> }
+                        else { <option value="@p">@p</option> }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Status</option>
+                    @foreach (var s in Enum.GetValues<Employeemanagementpractice.Models.PaymentStatus>())
+                    {
+                        if (ViewBag.Status == s.ToString()) { <option value="@s" selected="selected">@s</option> }
+                        else { <option value="@s">@s</option> }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-filter me-1"></i>Filter</button>
+            </div>
+            <div class="col-md-2">
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm w-100"><i class="fas fa-times me-1"></i>Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card"><div class="stat-label">Total Records</div><div class="stat-value">@ViewBag.TotalCount</div></div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card"><div class="stat-label">Total Amount</div><div class="stat-value text-success">R @(((decimal)ViewBag.TotalAmount).ToString("N2"))</div></div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-hover" id="payrollTable">
+            <thead>
+                <tr><th>Student</th><th>Team Leader</th><th>Date</th><th>Amount</th><th>Method</th><th>Reference</th><th>Status</th><th>Period</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    var badge = p.Status switch { Employeemanagementpractice.Models.PaymentStatus.Pending => "bg-warning", Employeemanagementpractice.Models.PaymentStatus.Paid => "bg-success", Employeemanagementpractice.Models.PaymentStatus.Failed => "bg-danger", _ => "bg-secondary" };
+                    <tr>
+                        <td><a href="@Url.Action("Profile","Student",new{id=p.StudentId})" class="text-decoration-none fw-bold">@p.Student?.FullName</a></td>
+                        <td><small class="text-muted">@p.Student?.TeamLeader?.User?.FullName</small></td>
+                        <td>@p.PaymentDate.ToString("dd MMM yyyy")</td>
+                        <td class="fw-bold">R @p.Amount.ToString("N2")</td>
+                        <td>@(p.PaymentMethod ?? "—")</td>
+                        <td><small>@(p.Reference ?? "—")</small></td>
+                        <td>
+                            <select class="form-select form-select-sm" style="width:auto;display:inline-block;" onchange="updatePayrollStatus(@p.Id, this.value)">
+                                @foreach (var s in Enum.GetValues<Employeemanagementpractice.Models.PaymentStatus>())
+                                {
+                                    if (p.Status == s) { <option value="@s" selected="selected">@s</option> }
+                                    else { <option value="@s">@s</option> }
+                                }
+                            </select>
+                        </td>
+                        <td>@(p.PayPeriod ?? "—")</td>
+                        <td><a href="@Url.Action("Profile","Student",new{id=p.StudentId})" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="9" class="text-center text-muted py-5"><i class="fas fa-money-bill-wave fa-3x mb-3 d-block opacity-25"></i>No payroll records.</td></tr>
+                }
+            </tbody>
+        </table>
+
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+                <span class="text-muted small">Page @ViewBag.Page of @ViewBag.TotalPages (@ViewBag.TotalCount total)</span>
+                <nav><ul class="pagination pagination-sm mb-0">
+                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == (int)ViewBag.Page ? "active" : "")"><a class="page-link" href="@Url.Action("Index",new{page=i,studentId=ViewBag.StudentId,payPeriod=ViewBag.PayPeriod,status=ViewBag.Status})">@i</a></li>
+                    }
+                </ul></nav>
+            </div>
+        }
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('payrollTable','Payroll Report')"><i class="fas fa-file-pdf me-1"></i>Export PDF</button>
+        <a href="@Url.Action("ExportPayrollExcel","Report",new{studentId=ViewBag.StudentId,payPeriod=ViewBag.PayPeriod})" class="btn btn-success btn-sm"><i class="fas fa-file-excel me-1"></i>Export Excel</a>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function updatePayrollStatus(id, status) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    fetch('@Url.Action("UpdateStatus")', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
+        body: new URLSearchParams({ id: id, status: status })
+    }).then(r => r.json()).then(d => { if (d.success) showToast('Status updated!'); });
+}
+</script>
+}

@@ -1,0 +1,49 @@
+@model Employeemanagementpractice.Models.ViewModels.AnnouncementViewModel
+@{ ViewData["Title"] = "Create Announcement"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Announcements</a>
+            <h2 class="mt-1" style="font-size:1.1rem;"><i class="fas fa-bullhorn me-2"></i>Create Announcement</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="stat-card">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="alert alert-danger" style="display:none;"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label asp-for="Title" class="form-label fw-bold">Title <span class="text-danger">*</span></label>
+                            <input asp-for="Title" class="form-control" placeholder="Announcement title..." />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <label asp-for="Message" class="form-label fw-bold">Message <span class="text-danger">*</span></label>
+                            <textarea asp-for="Message" class="form-control" rows="5" placeholder="Announcement message..."></textarea>
+                            <span asp-validation-for="Message" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="TargetAudience" class="form-label fw-bold">Target Audience</label>
+                            <select asp-for="TargetAudience" asp-items="Html.GetEnumSelectList<Employeemanagementpractice.Models.TargetAudience>()" class="form-select"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ExpiresAt" class="form-label fw-bold">Expires At <small class="text-muted">(Optional)</small></label>
+                            <input asp-for="ExpiresAt" type="datetime-local" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Publish</button>
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

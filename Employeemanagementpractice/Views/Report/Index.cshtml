@@ -1,0 +1,102 @@
+@model Employeemanagementpractice.Models.ViewModels.ReportBuilderViewModel
+@{ ViewData["Title"] = "Reports"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-chart-bar me-2"></i>Report Builder</h2>
+        <div>
+            <a href="@Url.Action("StudentReport")" class="btn btn-outline-primary btn-sm me-2"><i class="fas fa-user-graduate me-1"></i>Student Report</a>
+            <a href="@Url.Action("StudentsByTeamLeader")" class="btn btn-outline-primary btn-sm"><i class="fas fa-user-tie me-1"></i>By Team Leader</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Available Fields -->
+        <div class="col-lg-4">
+            <div class="stat-card">
+                <h6 class="mb-3"><i class="fas fa-database me-2"></i>Available Fields</h6>
+                <input type="text" id="fieldSearch" class="form-control form-control-sm mb-3" placeholder="Search fields..." oninput="filterFields(this.value)" />
+                @{
+                    var groups = Model.AvailableFields.GroupBy(f => f.Table);
+                }
+                @foreach (var group in groups)
+                {
+                    <div class="mb-2">
+                        <small class="text-muted fw-bold text-uppercase">@group.Key</small>
+                    </div>
+                    @foreach (var field in group)
+                    {
+                        <div class="field-item" data-field="@field.FieldName" onclick="toggleReportField('@field.FieldName', this)">
+                            <i class="fas fa-columns me-1 text-muted"></i>@field.DisplayName
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Right: Selected Fields & Results -->
+        <div class="col-lg-8">
+            <div class="stat-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0"><i class="fas fa-list-check me-2"></i>Selected Fields</h6>
+                    <div>
+                        <button class="btn btn-primary btn-sm" onclick="runReport()"><i class="fas fa-play me-1"></i>Run Report</button>
+                        <button class="btn btn-outline-success btn-sm ms-1" onclick="saveReportConfig()"><i class="fas fa-save me-1"></i>Save</button>
+                    </div>
+                </div>
+                <div id="selectedFieldsList"><p class="text-muted small">Click fields from the left panel to add them to your report</p></div>
+            </div>
+
+            <!-- Saved Reports -->
+            @if (Model.SavedReports.Any())
+            {
+                <div class="stat-card mb-4">
+                    <h6 class="mb-3"><i class="fas fa-bookmark me-2"></i>Saved Reports</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var r in Model.SavedReports)
+                        {
+                            <button class="btn btn-outline-primary btn-sm" onclick="loadSavedReport(@r.Id)">
+                                <i class="fas fa-file-alt me-1"></i>@r.ReportName
+                                <small class="text-muted ms-1">@r.CreatedAt.ToString("dd MMM")</small>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Results -->
+            <div id="reportResults"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function filterFields(val) {
+    document.querySelectorAll('.field-item').forEach(function(el) {
+        el.style.display = el.textContent.toLowerCase().includes(val.toLowerCase()) ? 'block' : 'none';
+    });
+}
+function saveReportConfig() {
+    if (selectedReportFields.length === 0) { alert('Select fields first'); return; }
+    var name = prompt('Report name:');
+    if (!name) return;
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    fetch('@Url.Action("SaveReport")', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token || '' },
+        body: new URLSearchParams({ reportName: name, fieldsJson: JSON.stringify(selectedReportFields) })
+    }).then(r => r.json()).then(d => { if (d.success) showToast('Report saved!'); });
+}
+function loadSavedReport(id) {
+    fetch('@Url.Action("LoadReport")' + '?id=' + id).then(r => r.json()).then(d => {
+        selectedReportFields = JSON.parse(d.fieldsJson);
+        updateSelectedFieldsList();
+        document.querySelectorAll('.field-item').forEach(el => {
+            el.classList.toggle('selected', selectedReportFields.includes(el.dataset.field));
+        });
+        runReport();
+    });
+}
+</script>
+}

@@ -1,0 +1,90 @@
+@model List<Employeemanagementpractice.Models.ViewModels.UserSettingsViewModel>
+@{ ViewData["Title"] = "User Management"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-users-cog me-2"></i>User Management</h2>
+        <a href="@Url.Action("CreateUser")" class="btn btn-primary"><i class="fas fa-user-plus me-2"></i>Create User</a>
+    </div>
+
+    <div class="filter-bar">
+        <form method="get" class="row g-2 align-items-end no-loading">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search users..." value="@ViewBag.Search" />
+                </div>
+            </div>
+            <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>Search</button></div>
+        </form>
+    </div>
+
+    <div class="table-container">
+        @Html.AntiForgeryToken()
+        <table class="table table-hover">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td class="fw-bold"><i class="fas fa-user-circle me-1 text-primary"></i>@u.FirstName @u.LastName</td>
+                        <td><small>@u.Email</small></td>
+                        <td>
+                            <select class="form-select form-select-sm" style="width:auto;" onchange="changeUserRole('@u.UserId', this)">
+                                @foreach (var r in ViewBag.AllRoles as List<string>)
+                                {
+                                    if (u.Roles.Contains(r)) { <option value="@r" selected="selected">@r</option> }
+                                    else { <option value="@r">@r</option> }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            @if (u.IsLocked)
+                            {
+                                <span class="badge bg-danger badge-status"><i class="fas fa-lock me-1"></i>Locked</span>
+                            }
+                            else if (u.IsActive)
+                            {
+                                <span class="badge bg-success badge-status"><i class="fas fa-check me-1"></i>Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary badge-status">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="ToggleLock" method="post" class="d-inline">
+                                <input type="hidden" name="userId" value="@u.UserId" />
+                                @if (u.IsLocked)
+                                {
+                                    <button type="submit" class="btn btn-sm btn-outline-success" data-bs-toggle="tooltip" title="Unlock Account">
+                                        <i class="fas fa-unlock"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Lock Account" onclick="return confirm('Lock this user account?')">
+                                        <i class="fas fa-lock"></i>
+                                    </button>
+                                }
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+                <span class="text-muted small">Page @ViewBag.Page of @ViewBag.TotalPages (@ViewBag.TotalCount)</span>
+                <nav><ul class="pagination pagination-sm mb-0">
+                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == (int)ViewBag.Page ? "active" : "")"><a class="page-link" href="@Url.Action("Users",new{page=i,search=ViewBag.Search})">@i</a></li>
+                    }
+                </ul></nav>
+            </div>
+        }
+    </div>
+</div>

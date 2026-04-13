@@ -1,0 +1,64 @@
+@model Employeemanagementpractice.Models.TrainingCourse
+@{ ViewData["Title"] = Model.Title; }
+
+<div class="row">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb" class="mb-3"><ol class="breadcrumb small"><li class="breadcrumb-item"><a asp-action="Index">Training</a></li><li class="breadcrumb-item active">@Model.Title</li></ol></nav>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between">
+                <h5 class="mb-0"><i class="fas fa-book-open me-2"></i>@Model.Title</h5>
+                <span class="badge bg-light text-dark">@Model.Difficulty</span>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.VideoUrl))
+                {
+                    <div class="ratio ratio-16x9 mb-4">
+                        <iframe src="@Model.VideoUrl" allowfullscreen class="rounded"></iframe>
+                    </div>
+                }
+                <div class="course-content">@Html.Raw(Model.Content ?? "<p class='text-muted'>No content available for this course yet.</p>")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Course Info</h6>
+                <table class="table table-sm table-borderless small">
+                    <tr><td class="text-muted">Category</td><td class="fw-bold">@(Model.Category ?? "General")</td></tr>
+                    <tr><td class="text-muted">Duration</td><td class="fw-bold">@Model.DurationMinutes minutes</td></tr>
+                    <tr><td class="text-muted">Difficulty</td><td><span class="badge bg-@(Model.Difficulty == "Beginner" ? "success" : Model.Difficulty == "Intermediate" ? "warning" : "danger")">@Model.Difficulty</span></td></tr>
+                    <tr><td class="text-muted">Mandatory</td><td>@(Model.IsMandatory ? "Yes" : "No")</td></tr>
+                </table>
+                @if (!string.IsNullOrEmpty(Model.MaterialUrl))
+                {
+                    <a href="@Model.MaterialUrl" target="_blank" class="btn btn-outline-primary btn-sm w-100 mb-2"><i class="fas fa-download me-1"></i>Download Materials</a>
+                }
+            </div>
+        </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="fw-bold mb-3">Your Progress</h6>
+                <div class="progress mb-3" style="height:10px;">
+                    <div class="progress-bar bg-success" id="courseProgress" style="width:10%">10%</div>
+                </div>
+                <button class="btn btn-primary w-100 mb-2" onclick="markProgress(50)"><i class="fas fa-tasks me-1"></i>Mark 50% Complete</button>
+                <button class="btn btn-success w-100" onclick="completeCourse()"><i class="fas fa-check-circle me-1"></i>Mark as Completed</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function markProgress(pct) {
+    fetch('/Training/UpdateProgress', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({courseId:@Model.Id, percent:pct})})
+    .then(r=>r.json()).then(d=>{ if(d.success){ document.getElementById('courseProgress').style.width=pct+'%'; document.getElementById('courseProgress').textContent=pct+'%'; showToast('Progress updated!','success'); }});
+}
+function completeCourse() {
+    var score = prompt('Enter quiz score (0-100) or leave empty:');
+    fetch('/Training/Complete', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({courseId:@Model.Id, quizScore: score ? parseInt(score) : null})})
+    .then(r=>r.json()).then(d=>{ if(d.success){ document.getElementById('courseProgress').style.width='100%'; document.getElementById('courseProgress').textContent='100%'; showToast('Course completed!','success'); }});
+}
+</script>
+}

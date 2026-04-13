@@ -1,0 +1,72 @@
+@model Employeemanagementpractice.Models.ViewModels.PayrollViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{ ViewData["Title"] = "Create Payroll Record"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Payroll</a>
+            <h2 class="mt-1" style="font-size:1.1rem;"><i class="fas fa-plus me-2"></i>New Payroll Record</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="stat-card">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="alert alert-danger" style="display:none;"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="StudentId" class="form-label fw-bold">Student <span class="text-danger">*</span></label>
+                            <select asp-for="StudentId" class="form-select">
+                                <option value="">-- Select Student --</option>
+                                @foreach (var s in ViewBag.Students as List<SelectListItem>)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                            <span asp-validation-for="StudentId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="PaymentDate" class="form-label fw-bold">Payment Date <span class="text-danger">*</span></label>
+                            <input asp-for="PaymentDate" type="date" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Amount" class="form-label fw-bold">Amount (R) <span class="text-danger">*</span></label>
+                            <div class="input-group"><span class="input-group-text">R</span>
+                                <input asp-for="Amount" type="number" step="0.01" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="PaymentMethod" class="form-label fw-bold">Payment Method</label>
+                            <select asp-for="PaymentMethod" class="form-select">
+                                <option value="">—</option>
+                                <option>EFT</option><option>Cash</option><option>Cheque</option><option>Mobile Payment</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Reference" class="form-label fw-bold">Reference</label>
+                            <input asp-for="Reference" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="PayPeriod" class="form-label fw-bold">Pay Period</label>
+                            <input asp-for="PayPeriod" class="form-control" placeholder="e.g. 2026-04" />
+                        </div>
+                        <div class="col-md-12">
+                            <label asp-for="Notes" class="form-label fw-bold">Notes</label>
+                            <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create Record</button>
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

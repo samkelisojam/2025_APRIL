@@ -1,0 +1,81 @@
+@model List<Employeemanagementpractice.Models.Student>
+@{
+    var tl = ViewBag.TeamLeader as Employeemanagementpractice.Models.TeamLeader;
+    ViewData["Title"] = tl?.User.FullName + " - Students";
+}
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Details", new { id = tl?.Id })" class="text-decoration-none text-muted" style="font-size:0.75rem;"><i class="fas fa-arrow-left me-1"></i>Back to @tl?.User.FullName</a>
+            <h2 class="mt-1" style="font-size:1.1rem;"><i class="fas fa-users me-2"></i>@tl?.User.FullName's Students</h2>
+        </div>
+        <a href="@Url.Action("Create","Student", new { teamLeaderId = tl?.Id })" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Student</a>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+        <form method="get" class="row g-2 align-items-end no-loading">
+            <div class="col-md-6">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted" style="font-size:0.7rem;"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search students..." value="@ViewBag.Search" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>Search</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-hover mb-0" id="studentsTable">
+            <thead>
+                <tr><th>Name</th><th>SA ID</th><th>Gender</th><th>Email</th><th>Phone</th><th>City</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td><a href="@Url.Action("Profile","Student",new{id=s.Id})" class="text-decoration-none fw-bold"><i class="fas fa-user-graduate me-1 text-success"></i>@s.FullName</a></td>
+                        <td><code>@s.SAIDNumber</code></td>
+                        <td>@s.Gender</td>
+                        <td><small>@(s.Email ?? "—")</small></td>
+                        <td>@(s.Phone ?? "—")</td>
+                        <td>@(s.City ?? "—")</td>
+                        <td>
+                            <a href="@Url.Action("Profile","Student",new{id=s.Id})" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                            <a href="@Url.Action("Edit","Student",new{id=s.Id})" class="btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-user-graduate fa-2x mb-2 d-block opacity-25"></i>No students found.</td></tr>
+                }
+            </tbody>
+        </table>
+
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+                <span class="text-muted small">Page @ViewBag.Page of @ViewBag.TotalPages (@ViewBag.TotalCount total)</span>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == (int)ViewBag.Page ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Students", new { id = tl?.Id, page = i, search = ViewBag.Search })">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('studentsTable','Students - @tl?.User.FullName')"><i class="fas fa-file-pdf me-1"></i>Export PDF</button>
+        <a href="@Url.Action("ExportStudentsExcel","Report",new{teamLeaderId=tl?.Id})" class="btn btn-success btn-sm"><i class="fas fa-file-excel me-1"></i>Export Excel</a>
+    </div>
+</div>

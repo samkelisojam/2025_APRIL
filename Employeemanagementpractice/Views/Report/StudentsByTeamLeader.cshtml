@@ -1,0 +1,36 @@
+@model List<Employeemanagementpractice.Models.TeamLeader>
+@{ ViewData["Title"] = "Students by Team Leader"; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Reports</a>
+            <h2 class="mt-1"><i class="fas fa-user-tie me-2"></i>Students by Team Leader</h2>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('teamReportTable','Students by Team Leader')"><i class="fas fa-file-pdf me-1"></i>Export PDF</button>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-hover" id="teamReportTable">
+            <thead><tr><th>Team Leader</th><th>Department</th><th>Emp No</th><th>Students</th><th>Max</th><th>Capacity</th></tr></thead>
+            <tbody>
+                @foreach (var tl in Model)
+                {
+                    var count = tl.Students.Count;
+                    var pct = tl.MaxStudents > 0 ? (int)((double)count / tl.MaxStudents * 100) : 0;
+                    <tr>
+                        <td><a href="@Url.Action("Details","TeamLeader",new{id=tl.Id})" class="fw-bold text-decoration-none"><i class="fas fa-user-tie me-1 text-primary"></i>@tl.User.FullName</a></td>
+                        <td>@(tl.Department ?? "—")</td>
+                        <td><code>@tl.EmployeeNumber</code></td>
+                        <td><span class="badge bg-primary">@count</span></td>
+                        <td>@tl.MaxStudents</td>
+                        <td style="min-width:120px;">
+                            <div class="progress progress-thin"><div class="progress-bar @(pct>=90?"bg-danger":pct>=70?"bg-warning":"bg-success")" style="width:@pct%"></div></div>
+                            <small class="text-muted">@pct%</small>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

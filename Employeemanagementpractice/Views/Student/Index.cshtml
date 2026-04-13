@@ -1,0 +1,239 @@
+@model List<Employeemanagementpractice.Models.Student>
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Students";
+    var isTL = ViewBag.IsTeamLeader == true;
+}
+
+<div class="fade-in">
+    <div class="page-header">
+        <h2 style="font-size:1.1rem;"><i class="fas fa-user-graduate me-2"></i>Students</h2>
+        <a href="@Url.Action("Create")" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Register Student</a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <form method="get" class="row g-2 align-items-end no-loading">
+            <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted" style="font-size:0.7rem;"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search name, ID, email..." value="@ViewBag.Search" />
+                </div>
+            </div>
+            @if (!isTL)
+            {
+                <div class="col-md-3">
+                    <select name="teamLeaderId" class="form-select form-select-sm">
+                        <option value="">All Team Leaders</option>
+                        @foreach (var tl in ViewBag.TeamLeaders as List<SelectListItem>)
+                        {
+                            if (ViewBag.TeamLeaderId?.ToString() == tl.Value) { <option value="@tl.Value" selected="selected">@tl.Text</option> }
+                            else { <option value="@tl.Value">@tl.Text</option> }
+                        }
+                    </select>
+                </div>
+            }
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-filter me-1"></i>Filter</button>
+            </div>
+            <div class="col-md-2">
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm w-100"><i class="fas fa-times me-1"></i>Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <table class="table table-hover" id="studentsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>SA ID</th>
+                    <th>Gender</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Team Leader</th>
+                    <th>City</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("Profile", new { id = s.Id })" class="text-decoration-none fw-bold">
+                                <i class="fas fa-user-graduate me-1 text-success"></i>@s.FullName
+                            </a>
+                        </td>
+                        <td><code class="small">@s.SAIDNumber</code></td>
+                        <td><span class="badge bg-light text-dark">@s.Gender</span></td>
+                        <td><small>@(s.Email ?? "—")</small></td>
+                        <td>@(s.Phone ?? "—")</td>
+                        <td>
+                            <a href="@Url.Action("Details","TeamLeader",new{id=s.TeamLeaderId})" class="text-decoration-none small">
+                                <i class="fas fa-user-tie me-1 text-primary"></i>@s.TeamLeader?.User?.FullName
+                            </a>
+                        </td>
+                        <td>@(s.City ?? "—")</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-info btn-profile-card" data-id="@s.Id" data-bs-toggle="tooltip" title="Profile Card"><i class="fas fa-id-card"></i></button>
+                                <a href="@Url.Action("Profile", new { id = s.Id })" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile"><i class="fas fa-eye"></i></a>
+                                <a href="@Url.Action("Edit", new { id = s.Id })" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>
+                                @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Staff"))
+                                {
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@s.Id"><i class="fas fa-ban"></i></button>
+                                }
+                            </div>
+
+                            <div class="modal fade" id="deleteModal-@s.Id" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Deactivation</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p>Deactivate <strong>@s.FullName</strong>?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form asp-action="Delete" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@s.Id" />
+                                                <button type="submit" class="btn btn-danger"><i class="fas fa-ban me-1"></i>Deactivate</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="8" class="text-center text-muted py-5">
+                        <i class="fas fa-user-graduate fa-3x mb-3 d-block opacity-25"></i>
+                        No students found. <a href="@Url.Action("Create")">Register one now</a>.
+                    </td></tr>
+                }
+            </tbody>
+        </table>
+
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+                <span class="text-muted small">Page @ViewBag.Page of @ViewBag.TotalPages (@ViewBag.TotalCount total)</span>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == (int)ViewBag.Page ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = i, search = ViewBag.Search, teamLeaderId = ViewBag.TeamLeaderId })">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('studentsTable','Students Report')"><i class="fas fa-file-pdf me-1"></i>Export PDF</button>
+        <a href="@Url.Action("ExportStudentsExcel","Report")" class="btn btn-success btn-sm"><i class="fas fa-file-excel me-1"></i>Export Excel</a>
+    </div>
+</div>
+
+<!-- Student Profile Card Modal -->
+<div class="modal fade" id="profileCardModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title"><i class="fas fa-id-card me-2"></i>Student Profile Card</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body" id="profileCardBody">
+        <div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2">Loading profile...</p></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button class="btn btn-primary" id="printCard"><i class="fas fa-print me-1"></i>Print</button></div>
+</div></div></div>
+
+@section Scripts {
+<script>
+document.querySelectorAll('.btn-profile-card').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const id = this.dataset.id;
+        const modal = new bootstrap.Modal(document.getElementById('profileCardModal'));
+        const body = document.getElementById('profileCardBody');
+        body.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2">Loading profile...</p></div>';
+        modal.show();
+        try {
+            const res = await fetch(`/StudentCard/Get?id=${id}`);
+            const s = await res.json();
+            if (!s || s.error) { body.innerHTML = '<div class="alert alert-danger">Student not found</div>'; return; }
+            body.innerHTML = `
+            <div class="row" id="printableCard">
+                <div class="col-md-4 text-center border-end">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:100px;height:100px;">
+                        <i class="fas fa-user-graduate fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">${s.fullName || 'N/A'}</h5>
+                    <span class="badge bg-${s.status === 'Active' ? 'success' : 'secondary'} mb-2">${s.status || 'N/A'}</span>
+                    <p class="text-muted small mb-1"><i class="fas fa-id-card me-1"></i>${s.saidNumber || '-'}</p>
+                    <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i>${s.email || '-'}</p>
+                    <p class="text-muted small mb-1"><i class="fas fa-phone me-1"></i>${s.phone || '-'}</p>
+                    <p class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i>${s.city || '-'}, ${s.province || '-'}</p>
+                    ${s.teamLeader ? `<hr><p class="small"><i class="fas fa-user-tie text-primary me-1"></i><strong>Team Leader:</strong> ${s.teamLeader}</p>` : ''}
+                </div>
+                <div class="col-md-8">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#cardPersonal">Personal</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#cardProgram">Program</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#cardDocs">Documents</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#cardPayroll">Payroll</a></li>
+                    </ul>
+                    <div class="tab-content pt-3">
+                        <div class="tab-pane active" id="cardPersonal">
+                            <div class="row g-2">
+                                ${infoRow('Date of Birth', s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('en-ZA') : '-')}
+                                ${infoRow('Gender', s.gender)}${infoRow('Race', s.race)}${infoRow('Nationality', s.nationality)}
+                                ${infoRow('Home Language', s.homeLanguage)}${infoRow('Disability', s.disability)}
+                                ${infoRow('Address', s.streetAddress)}${infoRow('Postal Code', s.postalCode)}
+                                ${infoRow('Municipality', s.municipality)}${infoRow('District', s.district)}
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="cardProgram">
+                            <div class="row g-2">
+                                ${infoRow('Program', s.program)}${infoRow('Qualification', s.qualificationLevel)}
+                                ${infoRow('Institution', s.institution)}${infoRow('Year Completed', s.yearCompleted)}
+                                ${infoRow('Field of Study', s.fieldOfStudy)}${infoRow('Employment Status', s.employmentStatus)}
+                                ${infoRow('Start Date', s.startDate ? new Date(s.startDate).toLocaleDateString('en-ZA') : '-')}
+                                ${infoRow('End Date', s.endDate ? new Date(s.endDate).toLocaleDateString('en-ZA') : '-')}
+                                ${infoRow('Stipend Amount', s.stipendAmount ? 'R ' + s.stipendAmount.toFixed(2) : '-')}
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="cardDocs">
+                            ${s.documents && s.documents.length ? s.documents.map(d => `<div class="d-flex align-items-center mb-2 p-2 bg-light rounded"><i class="fas fa-file-alt text-primary me-2"></i><div class="flex-grow-1"><strong class="small">${d.documentType || d.fileName}</strong><br><small class="text-muted">${d.fileName} (${(d.fileSizeBytes/1024).toFixed(0)} KB)</small></div><a href="/Document/Download/${d.id}" class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></a></div>`).join('') : '<p class="text-muted">No documents uploaded</p>'}
+                        </div>
+                        <div class="tab-pane" id="cardPayroll">
+                            ${s.payrollSummary ? `<div class="row g-3 text-center">
+                                <div class="col-6"><div class="bg-light rounded p-2"><small class="text-muted">Total Records</small><div class="fw-bold">${s.payrollSummary.totalRecords || 0}</div></div></div>
+                                <div class="col-6"><div class="bg-light rounded p-2"><small class="text-muted">Total Paid</small><div class="fw-bold text-success">R ${(s.payrollSummary.totalNetPay || 0).toFixed(2)}</div></div></div>
+                                <div class="col-6"><div class="bg-light rounded p-2"><small class="text-muted">Avg Salary</small><div class="fw-bold">R ${(s.payrollSummary.avgBasicSalary || 0).toFixed(2)}</div></div></div>
+                                <div class="col-6"><div class="bg-light rounded p-2"><small class="text-muted">Latest</small><div class="fw-bold">${s.payrollSummary.latestMonth || '-'}</div></div></div>
+                            </div>` : '<p class="text-muted">No payroll records</p>'}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        } catch(e) { body.innerHTML = '<div class="alert alert-danger">Error loading profile: ' + e.message + '</div>'; }
+    });
+});
+function infoRow(label, val) { return `<div class="col-6"><small class="text-muted">${label}</small><div class="fw-bold small">${val || '-'}</div></div>`; }
+document.getElementById('printCard').addEventListener('click', function() {
+    const content = document.getElementById('printableCard');
+    if (!content) return;
+    const w = window.open('','','width=800,height=600');
+    w.document.write('<html><head><title>Student Card</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></head><body class="p-4">'+content.innerHTML+'<script>setTimeout(()=>window.print(),500)<\/script></body></html>');
+    w.document.close();
+});
+</script>
+}

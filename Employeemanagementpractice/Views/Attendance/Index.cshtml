@@ -1,0 +1,121 @@
+@{ ViewData["Title"] = "Attendance"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0" style="font-size:1.1rem;"><i class="fas fa-user-check text-primary me-2"></i>Attendance Tracker</h4>
+    <div class="d-flex gap-2">
+        <input type="date" id="attendanceDate" class="form-control form-control-sm" style="width:180px;" />
+        <button class="btn btn-success btn-sm" id="btnBulkMark"><i class="fas fa-check-double me-1"></i>Bulk Mark All Present</button>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center bg-success bg-opacity-10"><i class="fas fa-check-circle fa-2x text-success mb-2"></i><h6>Present Rate</h6><span class="fw-bold fs-4 text-success" id="presentRate">-</span></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center bg-danger bg-opacity-10"><i class="fas fa-times-circle fa-2x text-danger mb-2"></i><h6>Absent Rate</h6><span class="fw-bold fs-4 text-danger" id="absentRate">-</span></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center bg-warning bg-opacity-10"><i class="fas fa-clock fa-2x text-warning mb-2"></i><h6>Late Rate</h6><span class="fw-bold fs-4 text-warning" id="lateRate">-</span></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm p-3 text-center bg-info bg-opacity-10"><i class="fas fa-user-graduate fa-2x text-info mb-2"></i><h6>Total Students</h6><span class="fw-bold fs-4 text-info" id="totalStudents">-</span></div></div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span class="fw-bold"><i class="fas fa-list me-1"></i>Student Attendance</span>
+        <input type="text" id="searchStudent" class="form-control" style="width:250px;" placeholder="Search student..." />
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>#</th><th>Student</th><th>ID Number</th><th>Program</th><th>Status</th><th>Check In</th><th>Check Out</th><th>Notes</th><th>Action</th></tr>
+                </thead>
+                <tbody id="attendanceBody"><tr><td colspan="9" class="text-center text-muted py-4">Loading students...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+const dateInput = document.getElementById('attendanceDate');
+dateInput.value = new Date().toISOString().split('T')[0];
+let students = [];
+
+async function loadAttendance() {
+    try {
+        const res = await fetch(`/Attendance/Index?date=${dateInput.value}&handler=json`);
+        if (!res.ok) { loadStudentsFallback(); return; }
+        students = await res.json();
+        renderTable();
+        loadStats();
+    } catch(e) { loadStudentsFallback(); }
+}
+
+function loadStudentsFallback() {
+    document.getElementById('attendanceBody').innerHTML = '<tr><td colspan="9" class="text-center py-4">Select a date and mark attendance for each student</td></tr>';
+}
+
+function renderTable() {
+    const q = (document.getElementById('searchStudent').value || '').toLowerCase();
+    const filtered = students.filter(s => !q || (s.name||'').toLowerCase().includes(q) || (s.idNumber||'').includes(q));
+    if (!filtered.length) { document.getElementById('attendanceBody').innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">No students found</td></tr>'; return; }
+    document.getElementById('totalStudents').textContent = students.length;
+    document.getElementById('attendanceBody').innerHTML = filtered.map((s, i) => `<tr>
+        <td>${i+1}</td>
+        <td><strong>${s.name || 'N/A'}</strong></td>
+        <td><code>${s.idNumber || '-'}</code></td>
+        <td>${s.program || '-'}</td>
+        <td><select class="form-select form-select-sm att-status" data-id="${s.studentId}" style="width:120px;">
+            <option value="Present" ${s.status==='Present'?'selected':''}>Present</option>
+            <option value="Absent" ${s.status==='Absent'?'selected':''}>Absent</option>
+            <option value="Late" ${s.status==='Late'?'selected':''}>Late</option>
+            <option value="Excused" ${s.status==='Excused'?'selected':''}>Excused</option>
+            <option value="HalfDay" ${s.status==='HalfDay'?'selected':''}>Half Day</option>
+        </select></td>
+        <td><input type="time" class="form-control form-control-sm att-checkin" data-id="${s.studentId}" value="${s.checkIn || ''}" style="width:110px;" /></td>
+        <td><input type="time" class="form-control form-control-sm att-checkout" data-id="${s.studentId}" value="${s.checkOut || ''}" style="width:110px;" /></td>
+        <td><input type="text" class="form-control form-control-sm att-notes" data-id="${s.studentId}" value="${s.notes || ''}" placeholder="Notes..." style="width:130px;" /></td>
+        <td><button class="btn btn-sm btn-primary btn-mark" data-id="${s.studentId}"><i class="fas fa-save"></i></button></td>
+    </tr>`).join('');
+
+    document.querySelectorAll('.btn-mark').forEach(btn => btn.addEventListener('click', () => markSingle(btn.dataset.id)));
+}
+
+async function markSingle(studentId) {
+    const row = document.querySelector(`.att-status[data-id="${studentId}"]`);
+    const status = row.value;
+    const checkIn = document.querySelector(`.att-checkin[data-id="${studentId}"]`).value;
+    const checkOut = document.querySelector(`.att-checkout[data-id="${studentId}"]`).value;
+    const notes = document.querySelector(`.att-notes[data-id="${studentId}"]`).value;
+    try {
+        const res = await fetch('/Attendance/Mark', { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ studentId: parseInt(studentId), date: dateInput.value, status, checkInTime: checkIn || null, checkOutTime: checkOut || null, notes }) });
+        const data = await res.json();
+        if (data.success) { showToast('Attendance saved', 'success'); loadStats(); } else showToast(data.message || 'Failed', 'danger');
+    } catch(e) { showToast('Error: ' + e.message, 'danger'); }
+}
+
+document.getElementById('btnBulkMark').addEventListener('click', async function() {
+    if (!confirm('Mark ALL students as Present for ' + dateInput.value + '?')) return;
+    this.disabled = true;
+    try {
+        const ids = students.map(s => s.studentId);
+        const res = await fetch('/Attendance/BulkMark', { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ studentIds: ids, date: dateInput.value, status: 'Present' }) });
+        const data = await res.json();
+        if (data.success) { showToast(`Marked ${data.count} students as Present`, 'success'); loadAttendance(); }
+        else showToast(data.message || 'Failed', 'danger');
+    } catch(e) { showToast('Error: ' + e.message, 'danger'); } finally { this.disabled = false; }
+});
+
+async function loadStats() {
+    try {
+        const res = await fetch(`/Attendance/Stats?date=${dateInput.value}`); const s = await res.json();
+        document.getElementById('presentRate').textContent = (s.presentRate || 0).toFixed(1) + '%';
+        document.getElementById('absentRate').textContent = (s.absentRate || 0).toFixed(1) + '%';
+        document.getElementById('lateRate').textContent = (s.lateRate || 0).toFixed(1) + '%';
+    } catch(e) { }
+}
+
+dateInput.addEventListener('change', loadAttendance);
+document.getElementById('searchStudent').addEventListener('input', renderTable);
+loadAttendance();
+</script>
+}

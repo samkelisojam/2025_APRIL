@@ -1,0 +1,25 @@
+@model Employeemanagementpractice.Models.TrainingCourse
+@{ ViewData["Title"] = "Create Training Course"; }
+
+<h4 class="fw-bold mb-4"><i class="fas fa-plus-circle text-primary me-2"></i>Create Training Course</h4>
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div class="row g-3">
+                <div class="col-md-8"><label class="form-label fw-bold">Title *</label><input asp-for="Title" class="form-control" required /></div>
+                <div class="col-md-4"><label class="form-label fw-bold">Category</label><input asp-for="Category" class="form-control" placeholder="e.g. Onboarding, IT, Safety" /></div>
+                <div class="col-md-12"><label class="form-label fw-bold">Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+                <div class="col-md-12"><label class="form-label fw-bold">Content (HTML)</label><textarea asp-for="Content" class="form-control" rows="8" placeholder="Course content with HTML formatting..."></textarea></div>
+                <div class="col-md-4"><label class="form-label fw-bold">Video URL</label><input asp-for="VideoUrl" class="form-control" placeholder="https://youtube.com/embed/..." /></div>
+                <div class="col-md-4"><label class="form-label fw-bold">Material URL</label><input asp-for="MaterialUrl" class="form-control" placeholder="Link to downloads" /></div>
+                <div class="col-md-2"><label class="form-label fw-bold">Duration (min)</label><input asp-for="DurationMinutes" class="form-control" type="number" value="30" /></div>
+                <div class="col-md-2"><label class="form-label fw-bold">Difficulty</label>
+                    <select asp-for="Difficulty" class="form-select"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
+                </div>
+                <div class="col-md-3"><div class="form-check mt-4"><input asp-for="IsMandatory" class="form-check-input" /><label class="form-check-label">Mandatory for all staff</label></div></div>
+                <div class="col-md-2"><label class="form-label fw-bold">Sort Order</label><input asp-for="SortOrder" class="form-control" type="number" value="0" /></div>
+            </div>
+            <div class="mt-4"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create Course</button><a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a></div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,5 @@
+@model Employeemanagementpractice.Models.ViewModels.TeamLeaderViewModel
+@{ ViewData["Title"] = "Edit Team Leader"; }
+
+<!-- Reuse Create view -->
+@await Html.PartialAsync("Create", Model)

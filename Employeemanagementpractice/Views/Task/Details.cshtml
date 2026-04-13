@@ -1,0 +1,113 @@
+@model Employeemanagementpractice.Models.TaskItem
+@{ ViewData["Title"] = Model.Title; }
+
+<div class="fade-in">
+    <div class="page-header">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Tasks</a>
+            <h2 class="mt-1"><i class="fas fa-tasks me-2"></i>@Model.Title</h2>
+        </div>
+        <div>
+            @{
+                var statusBadge = Model.Status switch { Employeemanagementpractice.Models.TaskStatus.New => "bg-secondary", Employeemanagementpractice.Models.TaskStatus.InProgress => "bg-primary", Employeemanagementpractice.Models.TaskStatus.Completed => "bg-success", _ => "bg-warning" };
+                var priorityClass = Model.Priority switch { Employeemanagementpractice.Models.TaskPriority.Low => "priority-low", Employeemanagementpractice.Models.TaskPriority.Medium => "priority-medium", Employeemanagementpractice.Models.TaskPriority.High => "priority-high", _ => "priority-urgent" };
+            }
+            <span class="badge @statusBadge badge-status fs-6 me-2">@Model.Status</span>
+            <span class="@priorityClass fw-bold"><i class="fas fa-flag me-1"></i>@Model.Priority</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Description -->
+            <div class="stat-card mb-4">
+                <h6 class="mb-3"><i class="fas fa-align-left me-2"></i>Description</h6>
+                <p>@(Model.Description ?? "No description provided.")</p>
+                <hr/>
+                <div class="row g-2 text-muted small">
+                    <div class="col-md-4"><i class="fas fa-user me-1"></i>Created by: <strong>@Model.CreatedBy?.FullName</strong></div>
+                    <div class="col-md-4"><i class="fas fa-user-check me-1"></i>Assigned to: <strong>@Model.AssignedTo?.FullName</strong></div>
+                    <div class="col-md-4"><i class="fas fa-calendar me-1"></i>Due: <strong>@(Model.DueDate?.ToString("dd MMM yyyy") ?? "No due date")</strong></div>
+                </div>
+            </div>
+
+            <!-- Update Status -->
+            <div class="stat-card mb-4">
+                <h6 class="mb-3"><i class="fas fa-sync-alt me-2"></i>Update Status</h6>
+                <div class="d-flex gap-2 flex-wrap">
+                    @foreach (var s in Enum.GetValues<Employeemanagementpractice.Models.TaskStatus>())
+                    {
+                        var btnClass = s == Model.Status ? "btn-primary" : "btn-outline-primary";
+                        <button class="btn @btnClass btn-sm" onclick="updateTaskStatus(@Model.Id, '@s')">@s</button>
+                    }
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="stat-card mb-4">
+                <h6 class="mb-3"><i class="fas fa-comments me-2"></i>Comments (@Model.Comments.Count)</h6>
+
+                @foreach (var c in Model.Comments.OrderByDescending(x => x.CreatedAt))
+                {
+                    <div class="border rounded p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <strong class="small"><i class="fas fa-user-circle me-1 text-primary"></i>@c.UserName</strong>
+                            <small class="text-muted">@c.CreatedAt.ToString("dd MMM yyyy HH:mm")</small>
+                        </div>
+                        <p class="mb-0 mt-1">@c.Comment</p>
+                    </div>
+                }
+
+                <hr/>
+                <form asp-action="AddComment" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="taskId" value="@Model.Id" />
+                    <div class="mb-2">
+                        <textarea name="comment" class="form-control" rows="3" placeholder="Write a comment..." required></textarea>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <label class="btn btn-sm btn-outline-secondary mb-0">
+                                <i class="fas fa-paperclip me-1"></i>Attach File
+                                <input type="file" name="attachment" class="d-none" onchange="document.getElementById('attachName').textContent=this.files[0]?.name||''" />
+                            </label>
+                            <span id="attachName" class="text-muted small ms-2"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-paper-plane me-1"></i>Post Comment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Attachments -->
+            <div class="stat-card mb-4">
+                <h6 class="mb-3"><i class="fas fa-paperclip me-2"></i>Attachments (@Model.Attachments.Count)</h6>
+                @foreach (var a in Model.Attachments)
+                {
+                    <div class="border rounded p-2 mb-2 d-flex align-items-center">
+                        <i class="fas fa-file me-2 text-muted"></i>
+                        <div class="flex-grow-1">
+                            <a href="@Url.Action("DownloadAttachment",new{id=a.Id})" class="text-decoration-none small fw-bold">@a.OriginalFileName</a>
+                            <div class="text-muted" style="font-size:0.7rem;">@a.UploadedBy &bull; @a.UploadedAt.ToString("dd MMM")</div>
+                        </div>
+                    </div>
+                }
+                @if (!Model.Attachments.Any())
+                {
+                    <p class="text-muted small text-center">No attachments</p>
+                }
+            </div>
+
+            <!-- Info -->
+            <div class="stat-card">
+                <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Details</h6>
+                <div class="info-group"><div class="info-label">Created</div><div class="info-value">@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</div></div>
+                @if (Model.UpdatedAt.HasValue)
+                {
+                    <div class="info-group"><div class="info-label">Last Updated</div><div class="info-value">@Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")</div></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

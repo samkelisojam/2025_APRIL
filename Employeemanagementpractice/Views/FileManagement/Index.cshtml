@@ -1,0 +1,522 @@
+@using Employeemanagementpractice.Services
+@model List<DocumentListItem>
+@{
+    ViewData["Title"] = "File Management";
+    var search = ViewBag.Search as string;
+    var documentType = ViewBag.DocumentType as int?;
+    var from = ViewBag.From as string;
+    var to = ViewBag.To as string;
+    var uploadedBy = ViewBag.UploadedBy as string;
+    var currentPage = (int)ViewBag.Page;
+    var totalPages = (int)ViewBag.TotalPages;
+    var totalCount = (int)ViewBag.TotalCount;
+    var totalSize = (long)ViewBag.TotalSize;
+    var typeBreakdown = ViewBag.TypeBreakdown as Dictionary<string, int>;
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="fas fa-folder-open text-primary me-2"></i>File Management</h4>
+        <p class="text-muted mb-0 small">Search, filter, download and manage all documents</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-success btn-sm" onclick="exportExcel()">
+            <i class="fas fa-file-excel me-1"></i>Export Excel
+        </button>
+        <button class="btn btn-outline-danger btn-sm" onclick="exportPdf()">
+            <i class="fas fa-file-pdf me-1"></i>Export PDF
+        </button>
+        <button class="btn btn-primary btn-sm" id="btnBulkDownload" onclick="showPinModal('bulkDownload')" disabled>
+            <i class="fas fa-download me-1"></i>Bulk Download (<span id="selectedCount">0</span>)
+        </button>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                <h5 class="fw-bold mb-0">@totalCount</h5>
+                <small class="text-muted">Total Documents</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-database fa-2x text-info mb-2"></i>
+                <h5 class="fw-bold mb-0">
+                    @if (totalSize < 1048576)
+                    {
+                        @($"{totalSize / 1024.0:F1} KB")
+                    }
+                    else
+                    {
+                        @($"{totalSize / 1048576.0:F1} MB")
+                    }
+                </h5>
+                <small class="text-muted">Total Size</small>
+            </div>
+        </div>
+    </div>
+    @if (typeBreakdown != null)
+    {
+        var topTypes = typeBreakdown.OrderByDescending(x => x.Value).Take(2).ToList();
+        foreach (var t in topTypes)
+        {
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tag fa-2x text-warning mb-2"></i>
+                        <h5 class="fw-bold mb-0">@t.Value</h5>
+                        <small class="text-muted">@t.Key</small>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<!-- Search & Filter -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="no-loading" id="filterForm">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Search</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="search" value="@search" class="form-control" placeholder="Name, SA ID, filename..." />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Document Type</label>
+                    <select name="documentType" class="form-select form-select-sm">
+                        <option value="">All Types</option>
+                        <option value="0" selected="@(documentType == 0)">ID Copy</option>
+                        <option value="1" selected="@(documentType == 1)">Qualification</option>
+                        <option value="2" selected="@(documentType == 2)">Bank Statement</option>
+                        <option value="3" selected="@(documentType == 3)">Other 1</option>
+                        <option value="4" selected="@(documentType == 4)">Other 2</option>
+                        <option value="5" selected="@(documentType == 5)">Other 3</option>
+                        <option value="6" selected="@(documentType == 6)">Other 4</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">From Date</label>
+                    <input type="date" name="from" value="@from" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">To Date</label>
+                    <input type="date" name="to" value="@to" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Uploaded By</label>
+                    <input type="text" name="uploadedBy" value="@uploadedBy" class="form-control form-control-sm" placeholder="Username..." />
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-filter me-1"></i>Filter</button>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(search) || documentType.HasValue || !string.IsNullOrEmpty(from) || !string.IsNullOrEmpty(to) || !string.IsNullOrEmpty(uploadedBy))
+            {
+                <div class="mt-2">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times me-1"></i>Clear Filters</a>
+                    <span class="text-muted small ms-2">Showing @totalCount results</span>
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+<!-- Documents Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="documentsTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:40px;">
+                            <input type="checkbox" class="form-check-input" id="selectAll" onchange="toggleSelectAll(this)" />
+                        </th>
+                        <th>Student</th>
+                        <th>SA ID</th>
+                        <th>Team Leader</th>
+                        <th>Type</th>
+                        <th>File Name</th>
+                        <th>Size</th>
+                        <th>Uploaded</th>
+                        <th>By</th>
+                        <th style="width:160px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="10" class="text-center py-5">
+                                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No documents found</p>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var doc in Model)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="form-check-input doc-checkbox" value="@doc.Id" onchange="updateSelection()" />
+                            </td>
+                            <td>
+                                <a asp-controller="Student" asp-action="Profile" asp-route-id="@doc.StudentId" class="text-decoration-none">
+                                    @doc.StudentName
+                                </a>
+                            </td>
+                            <td><code>@doc.SAIDNumber</code></td>
+                            <td>@doc.TeamLeaderName</td>
+                            <td>
+                                <span class="badge @(doc.DocumentType == Employeemanagementpractice.Models.DocumentType.IDCopy ? "bg-info" :
+                                    doc.DocumentType == Employeemanagementpractice.Models.DocumentType.Qualification ? "bg-success" :
+                                    doc.DocumentType == Employeemanagementpractice.Models.DocumentType.BankStatement ? "bg-warning text-dark" : "bg-secondary")">
+                                    @doc.DocumentTypeName
+                                </span>
+                                @if (doc.IsMandatory)
+                                {
+                                    <i class="fas fa-star text-danger ms-1" title="Mandatory" data-bs-toggle="tooltip"></i>
+                                }
+                            </td>
+                            <td class="text-truncate" style="max-width:200px;" title="@doc.OriginalFileName">
+                                <i class="fas fa-file text-muted me-1"></i>@doc.OriginalFileName
+                            </td>
+                            <td>@doc.FileSizeDisplay</td>
+                            <td>@doc.UploadedAt.ToString("dd MMM yyyy")</td>
+                            <td class="small text-muted">@doc.UploadedBy</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Download" asp-route-id="@doc.Id" class="btn btn-outline-primary" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <button class="btn btn-outline-info" title="Email" onclick="showEmailModal(@doc.Id, '@doc.OriginalFileName.Replace("'", "\\'")','@doc.StudentName.Replace("'", "\\'")' )">
+                                        <i class="fas fa-envelope"></i>
+                                    </button>
+                                    <a asp-controller="Student" asp-action="Profile" asp-route-id="@doc.StudentId" class="btn btn-outline-secondary" title="View Student">
+                                        <i class="fas fa-user"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (totalPages > 1)
+    {
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+            <span class="text-muted small">Page @(currentPage) of @totalPages (@totalCount total)</span>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    @if (currentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { search, documentType, from, to, uploadedBy, page = currentPage - 1 })">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    }
+                    @{
+                        var startPage = Math.Max(1, currentPage - 2);
+                        var endPage = Math.Min(totalPages, currentPage + 2);
+                    }
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { search, documentType, from, to, uploadedBy, page = i })">@i</a>
+                        </li>
+                    }
+                    @if (currentPage < totalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { search, documentType, from, to, uploadedBy, page = currentPage + 1 })">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+<!-- PIN Verification Modal -->
+<div class="modal fade" id="pinModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h6 class="modal-title"><i class="fas fa-lock me-2"></i>Security Verification</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                <p class="mb-3">Enter your security PIN to continue</p>
+                <input type="password" id="pinInput" class="form-control form-control-lg text-center" 
+                       placeholder="Enter PIN" maxlength="20" autocomplete="off" />
+                <div id="pinError" class="text-danger small mt-2" style="display:none;"></div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnVerifyPin" onclick="verifyAndExecute()">
+                    <i class="fas fa-check me-1"></i>Verify & Proceed
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Email Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h6 class="modal-title"><i class="fas fa-envelope me-2"></i>Send Document via Email</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="emailDocumentId" />
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Attachment</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="fas fa-paperclip"></i></span>
+                        <input type="text" id="emailAttachmentName" class="form-control" readonly />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">To Email <span class="text-danger">*</span></label>
+                    <input type="email" id="emailTo" class="form-control" placeholder="recipient@example.com" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
+                    <input type="text" id="emailSubject" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Message</label>
+                    <textarea id="emailBody" class="form-control" rows="4" placeholder="Optional message..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-info text-white" onclick="showPinModal('sendEmail')">
+                    <i class="fas fa-paper-plane me-1"></i>Send Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    var pendingAction = null;
+
+    // --- Selection ---
+    function toggleSelectAll(cb) {
+        document.querySelectorAll('.doc-checkbox').forEach(function(c) { c.checked = cb.checked; });
+        updateSelection();
+    }
+
+    function updateSelection() {
+        var checked = document.querySelectorAll('.doc-checkbox:checked');
+        var countEl = document.getElementById('selectedCount');
+        var btnBulk = document.getElementById('btnBulkDownload');
+        countEl.textContent = checked.length;
+        btnBulk.disabled = checked.length === 0;
+    }
+
+    function getSelectedIds() {
+        return Array.from(document.querySelectorAll('.doc-checkbox:checked')).map(function(c) { return parseInt(c.value); });
+    }
+
+    // --- PIN Modal ---
+    function showPinModal(action) {
+        pendingAction = action;
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinError').style.display = 'none';
+        new bootstrap.Modal(document.getElementById('pinModal')).show();
+        setTimeout(function() { document.getElementById('pinInput').focus(); }, 500);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var pinInput = document.getElementById('pinInput');
+        if (pinInput) {
+            pinInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') verifyAndExecute();
+            });
+        }
+    });
+
+    function verifyAndExecute() {
+        var pin = document.getElementById('pinInput').value.trim();
+        if (!pin) {
+            showPinError('Please enter your PIN');
+            return;
+        }
+
+        var btnVerify = document.getElementById('btnVerifyPin');
+        btnVerify.disabled = true;
+        btnVerify.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Verifying...';
+
+        // Execute the pending action with PIN
+        if (pendingAction === 'bulkDownload') {
+            executeBulkDownload(pin);
+        } else if (pendingAction === 'sendEmail') {
+            executeSendEmail(pin);
+        }
+    }
+
+    function showPinError(msg) {
+        var el = document.getElementById('pinError');
+        el.textContent = msg;
+        el.style.display = 'block';
+        resetPinButton();
+    }
+
+    function resetPinButton() {
+        var btn = document.getElementById('btnVerifyPin');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check me-1"></i>Verify & Proceed';
+    }
+
+    // --- Bulk Download ---
+    function executeBulkDownload(pin) {
+        var ids = getSelectedIds();
+        if (ids.length === 0) { showPinError('No documents selected'); return; }
+
+        fetch('@Url.Action("BulkDownload")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ documentIds: ids, pin: pin })
+        })
+        .then(function(r) {
+            if (r.ok) return r.blob();
+            return r.json().then(function(d) { throw new Error(d.message || 'Download failed'); });
+        })
+        .then(function(blob) {
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'Documents_' + new Date().toISOString().slice(0,10) + '.zip';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            bootstrap.Modal.getInstance(document.getElementById('pinModal'))?.hide();
+            resetPinButton();
+        })
+        .catch(function(err) { showPinError(err.message); });
+    }
+
+    // --- Email ---
+    function showEmailModal(docId, fileName, studentName) {
+        document.getElementById('emailDocumentId').value = docId;
+        document.getElementById('emailAttachmentName').value = fileName;
+        document.getElementById('emailSubject').value = 'Document: ' + fileName + ' - ' + studentName;
+        document.getElementById('emailBody').value = 'Dear Recipient,\n\nPlease find attached the document "' + fileName + '" for student ' + studentName + '.\n\nRegards,\nEMS Portal';
+        document.getElementById('emailTo').value = '';
+        new bootstrap.Modal(document.getElementById('emailModal')).show();
+    }
+
+    function executeSendEmail(pin) {
+        var toEmail = document.getElementById('emailTo').value.trim();
+        var subject = document.getElementById('emailSubject').value.trim();
+        var body = document.getElementById('emailBody').value;
+        var docId = parseInt(document.getElementById('emailDocumentId').value);
+
+        if (!toEmail || !subject) {
+            showPinError('Email and subject are required');
+            return;
+        }
+
+        fetch('@Url.Action("SendEmail")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                toEmail: toEmail,
+                subject: subject,
+                body: body,
+                documentId: docId || null,
+                pin: pin
+            })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('pinModal'))?.hide();
+                bootstrap.Modal.getInstance(document.getElementById('emailModal'))?.hide();
+                resetPinButton();
+                showToast('Email sent successfully!', 'success');
+            } else {
+                showPinError(data.message);
+            }
+        })
+        .catch(function(err) { showPinError('Failed to send email'); });
+    }
+
+    // --- Export ---
+    function exportExcel() {
+        var params = new URLSearchParams(window.location.search);
+        window.location.href = '@Url.Action("ExportExcel")?' + params.toString();
+    }
+
+    function exportPdf() {
+        var params = new URLSearchParams(window.location.search);
+        fetch('@Url.Action("ExportPdfData")?' + params.toString())
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!data || data.length === 0) { alert('No data to export'); return; }
+                var jsPDF = window.jspdf.jsPDF;
+                var doc = new jsPDF('l', 'mm', 'a4');
+                doc.setFontSize(14);
+                doc.text('Document List - EMS Portal', 14, 15);
+                doc.setFontSize(8);
+                doc.text('Generated: ' + new Date().toLocaleString() + ' | Total: ' + data.length + ' documents', 14, 22);
+
+                var headers = ['ID', 'Student', 'SA ID', 'Team Leader', 'Type', 'File', 'Size', 'Date', 'By', 'Mandatory'];
+                var rows = data.map(function(d) {
+                    return [d.Id, d.StudentName, d.SAIDNumber, d.TeamLeaderName, d.DocumentTypeName, d.OriginalFileName, d.FileSizeDisplay, d.UploadedAt, d.UploadedBy || '', d.Mandatory];
+                });
+
+                doc.autoTable({
+                    head: [headers],
+                    body: rows,
+                    startY: 28,
+                    styles: { fontSize: 7, cellPadding: 2 },
+                    headStyles: { fillColor: [13, 110, 253], textColor: 255, fontStyle: 'bold' },
+                    alternateRowStyles: { fillColor: [248, 250, 252] }
+                });
+
+                doc.save('DocumentList_' + new Date().toISOString().slice(0,10) + '.pdf');
+            })
+            .catch(function() { alert('Error generating PDF'); });
+    }
+
+    // --- Toast ---
+    function showToast(msg, type) {
+        var container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '1100';
+            document.body.appendChild(container);
+        }
+        var toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white bg-' + (type || 'primary') + ' border-0';
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = '<div class="d-flex"><div class="toast-body">' + escapeHtml(msg) + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
+        container.appendChild(toast);
+        new bootstrap.Toast(toast, { delay: 4000 }).show();
+        toast.addEventListener('hidden.bs.toast', function() { toast.remove(); });
+    }
+</script>
+}

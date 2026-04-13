@@ -1,0 +1,133 @@
+@{ ViewData["Title"] = "Calendar & Events"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0" style="font-size:1.1rem;"><i class="fas fa-calendar-alt text-primary me-2"></i>Calendar & Events</h4>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#eventModal"><i class="fas fa-plus me-1"></i>New Event</button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center"><i class="fas fa-calendar-day fa-2x text-primary mb-2"></i><h6 class="text-muted">Today</h6><span class="fw-bold fs-5" id="todayDate"></span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center"><i class="fas fa-bell fa-2x text-warning mb-2"></i><h6 class="text-muted">Upcoming</h6><span class="fw-bold fs-4" id="upcomingCount">0</span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center"><i class="fas fa-tasks fa-2x text-info mb-2"></i><h6 class="text-muted">Task Deadlines</h6><span class="fw-bold fs-4" id="taskDeadlines">0</span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 text-center"><i class="fas fa-star fa-2x text-success mb-2"></i><h6 class="text-muted">This Month Events</h6><span class="fw-bold fs-4" id="monthEvents">0</span></div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <button class="btn btn-sm btn-outline-primary" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                <h5 class="mb-0 fw-bold" id="calendarTitle"></h5>
+                <button class="btn btn-sm btn-outline-primary" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card-body p-2">
+                <table class="table table-bordered mb-0" id="calendarGrid">
+                    <thead><tr><th class="text-center text-danger">Sun</th><th class="text-center">Mon</th><th class="text-center">Tue</th><th class="text-center">Wed</th><th class="text-center">Thu</th><th class="text-center">Fri</th><th class="text-center text-info">Sat</th></tr></thead>
+                    <tbody id="calendarBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-list me-1"></i>Upcoming Events & Deadlines</div>
+            <div class="card-body p-0" style="max-height:500px;overflow-y:auto;">
+                <div class="list-group list-group-flush" id="upcomingList"><div class="list-group-item text-muted text-center py-3">Loading...</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="eventModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title"><i class="fas fa-calendar-plus me-1"></i>New Event</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+        <div class="mb-3"><label class="form-label fw-bold">Title *</label><input id="evTitle" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label fw-bold">Description</label><textarea id="evDesc" class="form-control" rows="2"></textarea></div>
+        <div class="row g-3">
+            <div class="col-md-6"><label class="form-label fw-bold">Start Date *</label><input id="evStart" type="datetime-local" class="form-control" required /></div>
+            <div class="col-md-6"><label class="form-label fw-bold">End Date</label><input id="evEnd" type="datetime-local" class="form-control" /></div>
+        </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-6"><label class="form-label fw-bold">Location</label><input id="evLocation" class="form-control" /></div>
+            <div class="col-md-3"><label class="form-label fw-bold">Type</label>
+                <select id="evType" class="form-select"><option>Meeting</option><option>Deadline</option><option>Training</option><option>Holiday</option><option>Other</option></select>
+            </div>
+            <div class="col-md-3"><label class="form-label fw-bold">Color</label><input id="evColor" type="color" class="form-control form-control-color" value="#0d6efd" /></div>
+        </div>
+        <div class="form-check mt-3"><input id="evAllDay" type="checkbox" class="form-check-input" /><label class="form-check-label">All Day Event</label></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveEvent"><i class="fas fa-save me-1"></i>Save Event</button></div>
+</div></div></div>
+
+@section Scripts {
+<script>
+let currentYear, currentMonth, allEvents = [];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-ZA', {weekday:'long',day:'numeric',month:'long'});
+
+function init() { const d = new Date(); currentYear = d.getFullYear(); currentMonth = d.getMonth(); loadEvents(); loadUpcoming(); }
+document.getElementById('prevMonth').addEventListener('click', () => { currentMonth--; if(currentMonth<0){currentMonth=11;currentYear--;} renderCalendar(); });
+document.getElementById('nextMonth').addEventListener('click', () => { currentMonth++; if(currentMonth>11){currentMonth=0;currentYear++;} renderCalendar(); });
+
+async function loadEvents() {
+    try { const res = await fetch(`/Calendar/GetEvents?year=${currentYear}&month=${currentMonth+1}`); allEvents = await res.json(); renderCalendar(); }
+    catch(e) { allEvents = []; renderCalendar(); }
+}
+async function loadUpcoming() {
+    try {
+        const res = await fetch('/Calendar/Upcoming'); const items = await res.json();
+        document.getElementById('upcomingCount').textContent = items.length;
+        const list = document.getElementById('upcomingList');
+        if (!items.length) { list.innerHTML = '<div class="list-group-item text-muted text-center py-3">No upcoming events</div>'; return; }
+        let tasks = 0;
+        list.innerHTML = items.map(i => { if(i.type === 'TaskDeadline') tasks++; const c = i.color || '#0d6efd';
+            return `<div class="list-group-item"><div class="d-flex align-items-center"><div style="width:4px;height:40px;background:${c};border-radius:2px;" class="me-3"></div><div class="flex-grow-1"><strong>${i.title}</strong><br><small class="text-muted">${new Date(i.startDate).toLocaleDateString('en-ZA')} &middot; ${i.type}</small></div></div></div>`; }).join('');
+        document.getElementById('taskDeadlines').textContent = tasks;
+        document.getElementById('monthEvents').textContent = items.filter(i=>i.type!=='TaskDeadline').length;
+    } catch(e) { console.log(e); }
+}
+function renderCalendar() {
+    document.getElementById('calendarTitle').textContent = `${months[currentMonth]} ${currentYear}`;
+    const first = new Date(currentYear, currentMonth, 1).getDay(), days = new Date(currentYear, currentMonth+1, 0).getDate();
+    const today = new Date(); let html = '<tr>', cell = 0;
+    for(let i=0;i<first;i++) { html += '<td class="text-muted p-1" style="height:80px;"></td>'; cell++; }
+    for(let d=1;d<=days;d++) {
+        const isToday = d===today.getDate() && currentMonth===today.getMonth() && currentYear===today.getFullYear();
+        const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayEvents = allEvents.filter(e => e.startDate && e.startDate.substring(0,10) === dateStr);
+        html += `<td class="p-1 ${isToday?'bg-primary bg-opacity-10':''}" style="height:80px;vertical-align:top;">`;
+        html += `<div class="fw-bold ${isToday?'text-primary':''} small">${d}</div>`;
+        dayEvents.forEach(e => { html += `<div class="badge text-truncate d-block mb-1" style="background:${e.color||'#0d6efd'};max-width:100%;font-size:0.65rem;">${e.title}</div>`; });
+        html += '</td>'; cell++;
+        if (cell % 7 === 0 && d < days) html += '</tr><tr>';
+    }
+    while(cell % 7 !== 0) { html += '<td style="height:80px;"></td>'; cell++; }
+    html += '</tr>';
+    document.getElementById('calendarBody').innerHTML = html;
+}
+document.getElementById('saveEvent').addEventListener('click', async function() {
+    const title = document.getElementById('evTitle').value;
+    if (!title) { showToast('Title is required', 'warning'); return; }
+    this.disabled = true;
+    try {
+        const res = await fetch('/Calendar/Create', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+            title, description: document.getElementById('evDesc').value, startDate: document.getElementById('evStart').value,
+            endDate: document.getElementById('evEnd').value || null, location: document.getElementById('evLocation').value,
+            eventType: document.getElementById('evType').value, color: document.getElementById('evColor').value, isAllDay: document.getElementById('evAllDay').checked
+        })});
+        const data = await res.json();
+        if (data.success) { bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide(); loadEvents(); loadUpcoming(); showToast('Event created!', 'success'); }
+        else showToast(data.message || 'Failed', 'danger');
+    } catch(e) { showToast('Error: '+e.message, 'danger'); } finally { this.disabled = false; }
+});
+init();
+</script>
+}

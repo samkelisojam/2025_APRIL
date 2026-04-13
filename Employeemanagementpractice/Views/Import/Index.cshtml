@@ -1,0 +1,109 @@
+@{ ViewData["Title"] = "Batch Import"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="fas fa-file-import text-primary me-2"></i>Batch Import Students</h4>
+    <a href="/Import/Template" class="btn btn-outline-success"><i class="fas fa-file-excel me-1"></i>Download Template</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-upload me-1"></i>Upload Excel File</div>
+            <div class="card-body">
+                <form id="importForm" enctype="multipart/form-data">
+                    <div class="border border-2 border-dashed rounded p-5 text-center" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                        <h5>Drag & Drop Excel File Here</h5>
+                        <p class="text-muted">or click to browse (.xlsx files only)</p>
+                        <input type="file" id="fileInput" name="file" accept=".xlsx" class="d-none" />
+                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()"><i class="fas fa-folder-open me-1"></i>Browse Files</button>
+                        <div class="mt-3 d-none" id="fileInfo"><span class="badge bg-success fs-6" id="fileName"></span></div>
+                    </div>
+                    <div class="mt-3"><button type="submit" class="btn btn-primary btn-lg w-100" id="importBtn" disabled><i class="fas fa-file-import me-1"></i>Import Students</button></div>
+                    <div class="progress mt-3 d-none" id="importProgress"><div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width:100%">Processing...</div></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-info-circle me-1"></i>Instructions</div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li class="mb-2">Download the <strong>Excel template</strong> using the button above</li>
+                    <li class="mb-2">Fill in student data following the column headers</li>
+                    <li class="mb-2">Ensure <strong>SA ID Numbers</strong> are valid (13 digits)</li>
+                    <li class="mb-2">Upload the completed file here</li>
+                    <li>Review the import results below</li>
+                </ol>
+            </div>
+        </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-columns me-1"></i>Required Columns</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        <tr><td class="fw-bold">FirstName *</td><td>Student first name</td></tr>
+                        <tr><td class="fw-bold">LastName *</td><td>Student surname</td></tr>
+                        <tr><td class="fw-bold">Email *</td><td>Valid email address</td></tr>
+                        <tr><td class="fw-bold">IdNumber *</td><td>13-digit SA ID</td></tr>
+                        <tr><td class="fw-bold">Phone</td><td>Contact number</td></tr>
+                        <tr><td class="fw-bold">Province</td><td>SA province</td></tr>
+                        <tr><td class="fw-bold">Program</td><td>Enrolled program</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mt-4 d-none" id="resultsCard">
+    <div class="card-header bg-white fw-bold"><i class="fas fa-chart-bar me-1"></i>Import Results</div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-md-3"><div class="alert alert-success mb-0 text-center"><strong id="resSuccess">0</strong><br>Imported</div></div>
+            <div class="col-md-3"><div class="alert alert-danger mb-0 text-center"><strong id="resFailed">0</strong><br>Failed</div></div>
+            <div class="col-md-3"><div class="alert alert-warning mb-0 text-center"><strong id="resDuplicate">0</strong><br>Duplicates</div></div>
+            <div class="col-md-3"><div class="alert alert-info mb-0 text-center"><strong id="resTotal">0</strong><br>Total Rows</div></div>
+        </div>
+        <div id="errorsList"></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+const dropZone = document.getElementById('dropZone'), fileInput = document.getElementById('fileInput');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-primary'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-primary'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('border-primary'); if(e.dataTransfer.files.length) { fileInput.files = e.dataTransfer.files; handleFile(); } });
+fileInput.addEventListener('change', handleFile);
+function handleFile() {
+    if (fileInput.files.length) {
+        document.getElementById('fileInfo').classList.remove('d-none');
+        document.getElementById('fileName').textContent = fileInput.files[0].name;
+        document.getElementById('importBtn').disabled = false;
+    }
+}
+document.getElementById('importForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('importBtn'); btn.disabled = true;
+    document.getElementById('importProgress').classList.remove('d-none');
+    const fd = new FormData(); fd.append('file', fileInput.files[0]);
+    try {
+        const res = await fetch('/Import/Upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        document.getElementById('resultsCard').classList.remove('d-none');
+        document.getElementById('resSuccess').textContent = data.imported || 0;
+        document.getElementById('resFailed').textContent = data.failed || 0;
+        document.getElementById('resDuplicate').textContent = data.duplicates || 0;
+        document.getElementById('resTotal').textContent = data.total || 0;
+        if (data.errors && data.errors.length) {
+            document.getElementById('errorsList').innerHTML = '<h6 class="fw-bold text-danger">Errors:</h6><ul class="list-group">' +
+                data.errors.map(e => `<li class="list-group-item list-group-item-danger small">${e}</li>`).join('') + '</ul>';
+        } else { document.getElementById('errorsList').innerHTML = ''; }
+        showToast(`Imported ${data.imported} of ${data.total} students`, data.failed > 0 ? 'warning' : 'success');
+    } catch(e) { showToast('Import error: ' + e.message, 'danger'); }
+    finally { btn.disabled = false; document.getElementById('importProgress').classList.add('d-none'); }
+});
+</script>
+}
