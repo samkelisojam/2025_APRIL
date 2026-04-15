@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "JKgJ8nGQ5BcmJxsLWK8tPnc1dcd27K8Kw7mRem9AFX0=",
+  "Hash": "NGq8zGw/YE6dxQUJVku0jaJPRgeKrzlxk73nlQewfoo=",
   "Source": "Employeemanagementpractice",
   "BasePath": "_content/Employeemanagementpractice",
   "Mode": "Default",
@@ -73,8 +73,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "m7btgxo5wt",
-      "Integrity": "/i2dl/Wv4o72tpC7pRLcYbRkEEmFeatlCwZiG+7fDYk=",
+      "Fingerprint": "w7o12zfdcg",
+      "Integrity": "JPFvaDmT/oCaKliaj+aX8ANrpLKPkoHS28Ast3JDyQI=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
@@ -120,6 +120,174 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\ba-academy-logo.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-128x128.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-128x128#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "5zhfa1disg",
+      "Integrity": "wUamWD3QoslWWLTTJln2EMggW3EETBYras20DNyqryU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-128x128.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-144x144.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-144x144#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "go4nma8hv6",
+      "Integrity": "cHUAuDMaNbYsQ6b0NllTLlSvPvYa7riKVFHpF8okl5U=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-144x144.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-152x152.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-152x152#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "5b1e5djfuk",
+      "Integrity": "IWdm16d7WLJweRC8qpHbPcUPjq++u24mrRbHB+x7drU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-152x152.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-192x192.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-192x192#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "itr2nr6y2k",
+      "Integrity": "Vpy/TsAmYuZxz58+z/sEZQHzVGpeCtd6BG27jyc07Qw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-192x192.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-384x384.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-384x384#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "0bnvxqzqa3",
+      "Integrity": "vKBAtCoHMAIpqRE3msq/NvmJTEWDB9BTMuJcaI8v2cE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-384x384.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-512x512.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-512x512#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "uctis42e5x",
+      "Integrity": "4s6bEHOa1bH+toM08rCiMRIiklrfM1BAs4tAuT16sBw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-512x512.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-72x72.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-72x72#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "e4du88yt8v",
+      "Integrity": "Etr23fsxxr3Kd8FckRSjb8oRGXQHE0Quqr9L608BCnE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-72x72.svg"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-96x96.svg",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "images/icons/icon-96x96#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "nlf1lnvsjo",
+      "Integrity": "O+bkfafkWfEAK4mSHJMgXQXDy2bypvQP6/IxrPaMqtg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icons\\icon-96x96.svg"
     },
     {
       "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\js\\site.js",
@@ -1338,6 +1506,69 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\manifest.json",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "manifest#[.{fingerprint}]?.json",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "9dtxj4c0ce",
+      "Integrity": "E6ptt0sBCuGLtc2hpNCl4K8HErp0lbrOJEyrVvCjiIY=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\manifest.json"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\offline.html",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "offline#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "wjzday9yb5",
+      "Integrity": "xOiABp2CuYW5zYda68bGTWZVm03aZNpbv3d0WAOpzzw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\offline.html"
+    },
+    {
+      "Identity": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\sw.js",
+      "SourceId": "Employeemanagementpractice",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\",
+      "BasePath": "_content/Employeemanagementpractice",
+      "RelativePath": "sw#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "3yzfw5cwsn",
+      "Integrity": "RYiWHanwFCWBIpL4r5kahEDF1yCi3d68c1+u9L5TwF0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\sw.js"
     }
   ],
   "Endpoints": [
@@ -1352,7 +1583,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "16558"
+          "Value": "24946"
         },
         {
           "Name": "Content-Type",
@@ -1360,11 +1591,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"/i2dl/Wv4o72tpC7pRLcYbRkEEmFeatlCwZiG+7fDYk=\""
+          "Value": "\"JPFvaDmT/oCaKliaj+aX8ANrpLKPkoHS28Ast3JDyQI=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Mon, 13 Apr 2026 12:27:16 GMT"
+          "Value": "Wed, 15 Apr 2026 08:55:30 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1374,12 +1605,12 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-/i2dl/Wv4o72tpC7pRLcYbRkEEmFeatlCwZiG+7fDYk="
+          "Value": "sha256-JPFvaDmT/oCaKliaj+aX8ANrpLKPkoHS28Ast3JDyQI="
         }
       ]
     },
     {
-      "Route": "css/site.m7btgxo5wt.css",
+      "Route": "css/site.w7o12zfdcg.css",
       "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\css\\site.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -1389,7 +1620,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "16558"
+          "Value": "24946"
         },
         {
           "Name": "Content-Type",
@@ -1397,11 +1628,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"/i2dl/Wv4o72tpC7pRLcYbRkEEmFeatlCwZiG+7fDYk=\""
+          "Value": "\"JPFvaDmT/oCaKliaj+aX8ANrpLKPkoHS28Ast3JDyQI=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Mon, 13 Apr 2026 12:27:16 GMT"
+          "Value": "Wed, 15 Apr 2026 08:55:30 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1411,7 +1642,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "m7btgxo5wt"
+          "Value": "w7o12zfdcg"
         },
         {
           "Name": "label",
@@ -1419,7 +1650,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-/i2dl/Wv4o72tpC7pRLcYbRkEEmFeatlCwZiG+7fDYk="
+          "Value": "sha256-JPFvaDmT/oCaKliaj+aX8ANrpLKPkoHS28Ast3JDyQI="
         }
       ]
     },
@@ -1748,6 +1979,662 @@
         {
           "Name": "integrity",
           "Value": "sha256-V2rd5wnJcXXrPSiCGfPBMVlKIGA+IPMKwgqO60Rdn1o="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-128x128.5zhfa1disg.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-128x128.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"wUamWD3QoslWWLTTJln2EMggW3EETBYras20DNyqryU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "5zhfa1disg"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-128x128.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-wUamWD3QoslWWLTTJln2EMggW3EETBYras20DNyqryU="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-128x128.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-128x128.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"wUamWD3QoslWWLTTJln2EMggW3EETBYras20DNyqryU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-wUamWD3QoslWWLTTJln2EMggW3EETBYras20DNyqryU="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-144x144.go4nma8hv6.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-144x144.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"cHUAuDMaNbYsQ6b0NllTLlSvPvYa7riKVFHpF8okl5U=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "go4nma8hv6"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-144x144.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-cHUAuDMaNbYsQ6b0NllTLlSvPvYa7riKVFHpF8okl5U="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-144x144.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-144x144.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"cHUAuDMaNbYsQ6b0NllTLlSvPvYa7riKVFHpF8okl5U=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-cHUAuDMaNbYsQ6b0NllTLlSvPvYa7riKVFHpF8okl5U="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-152x152.5b1e5djfuk.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-152x152.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"IWdm16d7WLJweRC8qpHbPcUPjq++u24mrRbHB+x7drU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "5b1e5djfuk"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-152x152.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-IWdm16d7WLJweRC8qpHbPcUPjq++u24mrRbHB+x7drU="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-152x152.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-152x152.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"IWdm16d7WLJweRC8qpHbPcUPjq++u24mrRbHB+x7drU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-IWdm16d7WLJweRC8qpHbPcUPjq++u24mrRbHB+x7drU="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-192x192.itr2nr6y2k.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-192x192.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Vpy/TsAmYuZxz58+z/sEZQHzVGpeCtd6BG27jyc07Qw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "itr2nr6y2k"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-192x192.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Vpy/TsAmYuZxz58+z/sEZQHzVGpeCtd6BG27jyc07Qw="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-192x192.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-192x192.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "461"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Vpy/TsAmYuZxz58+z/sEZQHzVGpeCtd6BG27jyc07Qw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Vpy/TsAmYuZxz58+z/sEZQHzVGpeCtd6BG27jyc07Qw="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-384x384.0bnvxqzqa3.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-384x384.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "462"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"vKBAtCoHMAIpqRE3msq/NvmJTEWDB9BTMuJcaI8v2cE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "0bnvxqzqa3"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-384x384.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-vKBAtCoHMAIpqRE3msq/NvmJTEWDB9BTMuJcaI8v2cE="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-384x384.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-384x384.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "462"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"vKBAtCoHMAIpqRE3msq/NvmJTEWDB9BTMuJcaI8v2cE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-vKBAtCoHMAIpqRE3msq/NvmJTEWDB9BTMuJcaI8v2cE="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-512x512.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-512x512.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "462"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4s6bEHOa1bH+toM08rCiMRIiklrfM1BAs4tAuT16sBw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-4s6bEHOa1bH+toM08rCiMRIiklrfM1BAs4tAuT16sBw="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-512x512.uctis42e5x.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-512x512.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "462"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4s6bEHOa1bH+toM08rCiMRIiklrfM1BAs4tAuT16sBw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "uctis42e5x"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-512x512.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-4s6bEHOa1bH+toM08rCiMRIiklrfM1BAs4tAuT16sBw="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-72x72.e4du88yt8v.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-72x72.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "454"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Etr23fsxxr3Kd8FckRSjb8oRGXQHE0Quqr9L608BCnE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "e4du88yt8v"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-72x72.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Etr23fsxxr3Kd8FckRSjb8oRGXQHE0Quqr9L608BCnE="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-72x72.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-72x72.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "454"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Etr23fsxxr3Kd8FckRSjb8oRGXQHE0Quqr9L608BCnE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Etr23fsxxr3Kd8FckRSjb8oRGXQHE0Quqr9L608BCnE="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-96x96.nlf1lnvsjo.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-96x96.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "455"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"O+bkfafkWfEAK4mSHJMgXQXDy2bypvQP6/IxrPaMqtg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "nlf1lnvsjo"
+        },
+        {
+          "Name": "label",
+          "Value": "images/icons/icon-96x96.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-O+bkfafkWfEAK4mSHJMgXQXDy2bypvQP6/IxrPaMqtg="
+        }
+      ]
+    },
+    {
+      "Route": "images/icons/icon-96x96.svg",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-96x96.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "455"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"O+bkfafkWfEAK4mSHJMgXQXDy2bypvQP6/IxrPaMqtg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:51:54 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-O+bkfafkWfEAK4mSHJMgXQXDy2bypvQP6/IxrPaMqtg="
         }
       ]
     },
@@ -6504,6 +7391,252 @@
         {
           "Name": "integrity",
           "Value": "sha256-16aFlqtpsG9RyieKZUUUjkJpqTgcJtWXwT312I4Iz1s="
+        }
+      ]
+    },
+    {
+      "Route": "manifest.9dtxj4c0ce.json",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\manifest.json",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1781"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "application/json"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"E6ptt0sBCuGLtc2hpNCl4K8HErp0lbrOJEyrVvCjiIY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 09:55:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "9dtxj4c0ce"
+        },
+        {
+          "Name": "label",
+          "Value": "manifest.json"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-E6ptt0sBCuGLtc2hpNCl4K8HErp0lbrOJEyrVvCjiIY="
+        }
+      ]
+    },
+    {
+      "Route": "manifest.json",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\manifest.json",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1781"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "application/json"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"E6ptt0sBCuGLtc2hpNCl4K8HErp0lbrOJEyrVvCjiIY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 09:55:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-E6ptt0sBCuGLtc2hpNCl4K8HErp0lbrOJEyrVvCjiIY="
+        }
+      ]
+    },
+    {
+      "Route": "offline.html",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\offline.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1265"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xOiABp2CuYW5zYda68bGTWZVm03aZNpbv3d0WAOpzzw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:43:02 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-xOiABp2CuYW5zYda68bGTWZVm03aZNpbv3d0WAOpzzw="
+        }
+      ]
+    },
+    {
+      "Route": "offline.wjzday9yb5.html",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\offline.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1265"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xOiABp2CuYW5zYda68bGTWZVm03aZNpbv3d0WAOpzzw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 08:43:02 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "wjzday9yb5"
+        },
+        {
+          "Name": "label",
+          "Value": "offline.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-xOiABp2CuYW5zYda68bGTWZVm03aZNpbv3d0WAOpzzw="
+        }
+      ]
+    },
+    {
+      "Route": "sw.3yzfw5cwsn.js",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\sw.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3322"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYiWHanwFCWBIpL4r5kahEDF1yCi3d68c1+u9L5TwF0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 09:55:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3yzfw5cwsn"
+        },
+        {
+          "Name": "label",
+          "Value": "sw.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYiWHanwFCWBIpL4r5kahEDF1yCi3d68c1+u9L5TwF0="
+        }
+      ]
+    },
+    {
+      "Route": "sw.js",
+      "AssetFile": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\sw.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3322"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RYiWHanwFCWBIpL4r5kahEDF1yCi3d68c1+u9L5TwF0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Apr 2026 09:55:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RYiWHanwFCWBIpL4r5kahEDF1yCi3d68c1+u9L5TwF0="
         }
       ]
     }

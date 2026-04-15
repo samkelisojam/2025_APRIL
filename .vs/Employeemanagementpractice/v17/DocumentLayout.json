@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|c:\\users\\q658366\\desktop\\projects--gitrepository\\2025_april\\employeemanagementpractice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|solutionrelative:employeemanagementpractice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|c:\\users\\q658366\\desktop\\projects--gitrepository\\2025_april\\employeemanagementpractice\\controllers\\studentportalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|solutionrelative:employeemanagementpractice\\controllers\\studentportalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|c:\\users\\q658366\\desktop\\projects--gitrepository\\2025_april\\employeemanagementpractice\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|solutionrelative:employeemanagementpractice\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|c:\\users\\q658366\\desktop\\projects--gitrepository\\2025_april\\employeemanagementpractice\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|solutionrelative:employeemanagementpractice\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|c:\\users\\q658366\\desktop\\projects--gitrepository\\2025_april\\employeemanagementpractice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|solutionrelative:employeemanagementpractice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2DF1F076-34E1-4CBB-9AED-E94A4EC4A4EA}|Employeemanagementpractice\\Employeemanagementpractice.csproj|c:\\users\\q658366\\desktop\\projects--gitrepository\\2025_april\\employeemanagementpractice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -38,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -54,32 +58,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Views\\Account\\Login.cshtml",
               "RelativeDocumentMoniker": "Employeemanagementpractice\\Views\\Account\\Login.cshtml",
               "ToolTip": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Views\\Account\\Login.cshtml",
               "RelativeToolTip": "Employeemanagementpractice\\Views\\Account\\Login.cshtml",
-              "ViewState": "AgIAABcAAAAAAAAAAAAAACoAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAABcAAAAAAAAAAAAAACwAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-15T08:11:09.155Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-15T08:11:09.155Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\appsettings.json",
-              "RelativeDocumentMoniker": "Employeemanagementpractice\\appsettings.json",
-              "ToolTip": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\appsettings.json",
-              "RelativeToolTip": "Employeemanagementpractice\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-04-15T07:25:27.266Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Employeemanagementpractice\\appsettings.Development.json",
@@ -91,7 +82,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "20260415072414_initial.cs",
               "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Migrations\\20260415072414_initial.cs",
               "RelativeDocumentMoniker": "Employeemanagementpractice\\Migrations\\20260415072414_initial.cs",
@@ -103,7 +94,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "ChangePassword.cshtml",
               "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Views\\Account\\ChangePassword.cshtml",
               "RelativeDocumentMoniker": "Employeemanagementpractice\\Views\\Account\\ChangePassword.cshtml",
@@ -115,7 +106,33 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Program.cs",
+              "RelativeDocumentMoniker": "Employeemanagementpractice\\Program.cs",
+              "ToolTip": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Program.cs",
+              "RelativeToolTip": "Employeemanagementpractice\\Program.cs",
+              "ViewState": "AgIAAEYBAAAAAAAAAAAAAF0BAABoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T06:22:14.595Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "StudentPortalController.cs",
+              "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Controllers\\StudentPortalController.cs",
+              "RelativeDocumentMoniker": "Employeemanagementpractice\\Controllers\\StudentPortalController.cs",
+              "ToolTip": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Controllers\\StudentPortalController.cs",
+              "RelativeToolTip": "Employeemanagementpractice\\Controllers\\StudentPortalController.cs",
+              "ViewState": "AgIAAJgAAAAAAAAAAAAAADkAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T08:46:09.459Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "Employeemanagementpractice\\Views\\Shared\\_Layout.cshtml",
@@ -123,21 +140,19 @@
               "RelativeToolTip": "Employeemanagementpractice\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-15T06:34:13.112Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-15T06:34:13.112Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Program.cs",
-              "RelativeDocumentMoniker": "Employeemanagementpractice\\Program.cs",
-              "ToolTip": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Program.cs",
-              "RelativeToolTip": "Employeemanagementpractice\\Program.cs",
-              "ViewState": "AgIAADsBAAAAAAAAAAAAAFoBAABoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-15T06:22:14.595Z",
-              "EditorCaption": ""
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\appsettings.json",
+              "RelativeDocumentMoniker": "Employeemanagementpractice\\appsettings.json",
+              "ToolTip": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\appsettings.json",
+              "RelativeToolTip": "Employeemanagementpractice\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-15T07:25:27.266Z"
             }
           ]
         }

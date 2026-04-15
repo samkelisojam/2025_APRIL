@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Employeemanagementpractice")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+38666f8e884d98848645028896389d0cb602274e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3d69fc428c7dac5af1ebfe33bd5025ca73b0657")]
 [assembly: System.Reflection.AssemblyProductAttribute("Employeemanagementpractice")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Employeemanagementpractice")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

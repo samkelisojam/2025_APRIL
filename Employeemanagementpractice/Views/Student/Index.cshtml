@@ -65,22 +65,22 @@
                 @foreach (var s in Model)
                 {
                     <tr>
-                        <td>
+                        <td data-label="Name">
                             <a href="@Url.Action("Profile", new { id = s.Id })" class="text-decoration-none fw-bold">
                                 <i class="fas fa-user-graduate me-1 text-success"></i>@s.FullName
                             </a>
                         </td>
-                        <td><code class="small">@s.SAIDNumber</code></td>
-                        <td><span class="badge bg-light text-dark">@s.Gender</span></td>
-                        <td><small>@(s.Email ?? "—")</small></td>
-                        <td>@(s.Phone ?? "—")</td>
-                        <td>
+                        <td data-label="SA ID"><code class="small">@s.SAIDNumber</code></td>
+                        <td data-label="Gender"><span class="badge bg-light text-dark">@s.Gender</span></td>
+                        <td data-label="Email"><small>@(s.Email ?? "—")</small></td>
+                        <td data-label="Phone">@(s.Phone ?? "—")</td>
+                        <td data-label="Team Leader">
                             <a href="@Url.Action("Details","TeamLeader",new{id=s.TeamLeaderId})" class="text-decoration-none small">
                                 <i class="fas fa-user-tie me-1 text-primary"></i>@s.TeamLeader?.User?.FullName
                             </a>
                         </td>
-                        <td>@(s.City ?? "—")</td>
-                        <td>
+                        <td data-label="City">@(s.City ?? "—")</td>
+                        <td data-label="Actions">
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-outline-info btn-profile-card" data-id="@s.Id" data-bs-toggle="tooltip" title="Profile Card"><i class="fas fa-id-card"></i></button>
                                 <a href="@Url.Action("Profile", new { id = s.Id })" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile"><i class="fas fa-eye"></i></a>

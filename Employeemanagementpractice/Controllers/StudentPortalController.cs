@@ -40,9 +40,9 @@ namespace Employeemanagementpractice.Controllers
             if (student == null) return RedirectToAction("Login", "Account");
 
             var today = await _attendance.GetTodayRecordAsync(student.Id);
-            var diary = await _diary.GetDiaryAsync(student.Id, DateTime.Today);
-            var history = await _attendance.GetStudentHistoryAsync(student.Id, DateTime.Today.AddDays(-30), DateTime.Today);
-            var summary = await _attendance.GetStudentSummaryAsync(student.Id, DateTime.Today.AddDays(-30), DateTime.Today);
+            var diary = await _diary.GetDiaryAsync(student.Id, SastClock.Today);
+            var history = await _attendance.GetStudentHistoryAsync(student.Id, SastClock.Today.AddDays(-30), SastClock.Today);
+            var summary = await _attendance.GetStudentSummaryAsync(student.Id, SastClock.Today.AddDays(-30), SastClock.Today);
 
             ViewBag.Student = student;
             ViewBag.TodayRecord = today;
@@ -68,7 +68,7 @@ namespace Employeemanagementpractice.Controllers
                 student.Id, req.Latitude, req.Longitude, req.Address,
                 req.DeviceName, selfieUrl, null, false);
 
-            return Json(new { success = result.Success, message = result.ErrorMessage, time = DateTime.Now.ToString("HH:mm:ss") });
+            return Json(new { success = result.Success, message = result.ErrorMessage, time = SastClock.Now.ToString("HH:mm:ss") });
         }
 
         [HttpPost]
@@ -87,7 +87,7 @@ namespace Employeemanagementpractice.Controllers
                 student.Id, req.Latitude, req.Longitude, req.Address,
                 req.DeviceName, selfieUrl);
 
-            return Json(new { success = result.Success, message = result.ErrorMessage, time = DateTime.Now.ToString("HH:mm:ss") });
+            return Json(new { success = result.Success, message = result.ErrorMessage, time = SastClock.Now.ToString("HH:mm:ss") });
         }
 
         [HttpPost]
@@ -96,7 +96,7 @@ namespace Employeemanagementpractice.Controllers
             var student = await GetCurrentStudentAsync();
             if (student == null) return Json(new { success = false });
 
-            var result = await _diary.SaveDiaryAsync(student.Id, DateTime.Today,
+            var result = await _diary.SaveDiaryAsync(student.Id, SastClock.Today,
                 req.Activities, req.Achievements, req.Challenges, req.PlannedForTomorrow);
 
             return Json(new { success = result.Success });
@@ -108,8 +108,8 @@ namespace Employeemanagementpractice.Controllers
             var student = await GetCurrentStudentAsync();
             if (student == null) return RedirectToAction("Login", "Account");
 
-            var startDate = from ?? DateTime.Today.AddDays(-30);
-            var endDate = to ?? DateTime.Today;
+            var startDate = from ?? SastClock.Today.AddDays(-30);
+            var endDate = to ?? SastClock.Today;
             var records = await _attendance.GetStudentHistoryAsync(student.Id, startDate, endDate);
             var diaries = await _diary.GetDiaryHistoryAsync(student.Id, startDate, endDate);
             var summary = await _attendance.GetStudentSummaryAsync(student.Id, startDate, endDate);
@@ -127,7 +127,7 @@ namespace Employeemanagementpractice.Controllers
         {
             var folder = Path.Combine(Directory.GetCurrentDirectory(), "FtpStorage", "selfies");
             Directory.CreateDirectory(folder);
-            var fileName = $"{studentId}_{type}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+            var fileName = $"{studentId}_{type}_{SastClock.Now:yyyyMMdd_HHmmss}.jpg";
             var filePath = Path.Combine(folder, fileName);
 
             // Remove data:image/...;base64, prefix

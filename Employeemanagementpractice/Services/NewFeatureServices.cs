@@ -550,8 +550,8 @@ namespace Employeemanagementpractice.Services
                 {
                     StudentId = studentId, Date = date.Date, Status = status,
                     Notes = notes, MarkedBy = markedBy, IsMarkedByProxy = true,
-                    ClockInTime = (status == "Present" || status == "Late") ? DateTime.Now : null,
-                    CheckInTime = (status == "Present" || status == "Late") ? DateTime.Now.TimeOfDay : null
+                    ClockInTime = (status == "Present" || status == "Late") ? SastClock.Now : null,
+                    CheckInTime = (status == "Present" || status == "Late") ? SastClock.Now.TimeOfDay : null
                 });
             }
             await _context.SaveChangesAsync();
@@ -567,12 +567,12 @@ namespace Employeemanagementpractice.Services
 
         public async Task<ServiceResult<int>> ClockInAsync(int studentId, double? latitude, double? longitude, string? address, string? deviceName, string? selfieUrl, string? markedBy, bool isProxy)
         {
-            var today = DateTime.Today;
+            var today = SastClock.Today;
             var existing = await _context.AttendanceRecords.FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == today);
             if (existing != null && existing.ClockInTime != null)
                 return new ServiceResult<int> { Success = false, ErrorMessage = "Already clocked in today" };
 
-            var now = DateTime.Now;
+            var now = SastClock.Now;
             if (existing != null)
             {
                 existing.ClockInTime = now;
@@ -608,14 +608,14 @@ namespace Employeemanagementpractice.Services
 
         public async Task<ServiceResult> ClockOutAsync(int studentId, double? latitude, double? longitude, string? address, string? deviceName, string? selfieUrl)
         {
-            var today = DateTime.Today;
+            var today = SastClock.Today;
             var record = await _context.AttendanceRecords.FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == today);
             if (record == null || record.ClockInTime == null)
                 return new ServiceResult { Success = false, ErrorMessage = "Must clock in first" };
             if (record.ClockOutTime != null)
                 return new ServiceResult { Success = false, ErrorMessage = "Already clocked out today" };
 
-            var now = DateTime.Now;
+            var now = SastClock.Now;
             record.ClockOutTime = now;
             record.ClockOutLatitude = latitude;
             record.ClockOutLongitude = longitude;
@@ -632,7 +632,7 @@ namespace Employeemanagementpractice.Services
         public async Task<AttendanceRecord?> GetTodayRecordAsync(int studentId)
         {
             return await _context.AttendanceRecords
-                .FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == DateTime.Today);
+                .FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == SastClock.Today);
         }
 
         public async Task<List<AttendanceRecord>> GetStudentHistoryAsync(int studentId, DateTime from, DateTime to)

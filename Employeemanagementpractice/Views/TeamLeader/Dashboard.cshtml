@@ -1,0 +1,255 @@
+@using Employeemanagementpractice.Services
+@{
+    ViewData["Title"] = "Team Leader Dashboard";
+    var tl = ViewBag.TeamLeader as Employeemanagementpractice.Models.TeamLeader;
+    var teamLeaders = ViewBag.TeamLeaders as List<Employeemanagementpractice.Models.TeamLeader> ?? new();
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Staff");
+}
+
+<div class="fade-in">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div>
+            <h4 class="fw-bold mb-0" style="font-size:1.1rem;">
+                <i class="fas fa-user-tie text-primary me-2"></i>@tl?.User?.FullName — Dashboard
+            </h4>
+            <p class="text-muted mb-0 small">@SastClock.Now.ToString("dddd, dd MMMM yyyy HH:mm") SAST &bull; Students: <strong>@tl?.Students?.Count(s => s.IsActive)</strong></p>
+        </div>
+        @if (isAdmin)
+        {
+            <div class="d-flex gap-2 align-items-center">
+                <select id="tlSelector" class="form-select form-select-sm" style="width:220px;" onchange="switchTL(this.value)">
+                    @foreach (var t in teamLeaders)
+                    {
+                        if (t.Id == tl?.Id)
+                        {
+                            <option value="@t.Id" selected="selected">@t.User?.FullName — @t.Department</option>
+                        }
+                        else
+                        {
+                            <option value="@t.Id">@t.User?.FullName — @t.Department</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+    </div>
+
+    <!-- Horizontal Tabs -->
+    <ul class="nav nav-tabs mb-3" id="dashTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-attendance" data-bs-toggle="tab" data-bs-target="#paneAttendance" type="button"><i class="fas fa-user-check me-1"></i>Attendance</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-timesheet" data-bs-toggle="tab" data-bs-target="#paneTimesheet" type="button"><i class="fas fa-calendar-alt me-1"></i>Monthly Timesheet</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-tasks" data-bs-toggle="tab" data-bs-target="#paneTasks" type="button"><i class="fas fa-tasks me-1"></i>Tasks by Student</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- ═══ TAB 1: Attendance (Day Records) ═══ -->
+        <div class="tab-pane fade show active" id="paneAttendance" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span class="fw-bold small"><i class="fas fa-calendar-day me-1"></i>Daily Attendance Records</span>
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="date" id="attDate" class="form-control form-control-sm" style="width:160px;" />
+                        <button class="btn btn-primary btn-sm" onclick="loadDayRecords()"><i class="fas fa-search me-1"></i>Load</button>
+                        <input type="text" id="attSearch" class="form-control form-control-sm" placeholder="Search student..." style="width:160px;" oninput="filterAttTable()" />
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 small" id="attTable">
+                            <thead class="table-light">
+                                <tr><th>Student</th><th>Status</th><th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Location</th><th>Device</th></tr>
+                            </thead>
+                            <tbody id="attBody"><tr><td colspan="7" class="text-center text-muted py-4">Select a date to view records</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ TAB 2: Monthly Timesheet ═══ -->
+        <div class="tab-pane fade" id="paneTimesheet" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span class="fw-bold small"><i class="fas fa-table me-1"></i>Monthly Timesheet</span>
+                    <div class="d-flex gap-2 align-items-center">
+                        <select id="tsMonth" class="form-select form-select-sm" style="width:130px;">
+                            <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+                            <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+                            <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+                            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                        </select>
+                        <input type="number" id="tsYear" class="form-control form-control-sm" style="width:90px;" min="2024" max="2030" />
+                        <button class="btn btn-primary btn-sm" onclick="loadTimesheet()"><i class="fas fa-search me-1"></i>Load</button>
+                        <button class="btn btn-danger btn-sm" onclick="exportTimesheetPdf()"><i class="fas fa-file-pdf me-1"></i>PDF</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height:70vh;overflow:auto;">
+                        <table class="table table-bordered table-sm mb-0" id="tsTable" style="font-size:0.65rem;">
+                            <thead class="table-light" id="tsHead"></thead>
+                            <tbody id="tsBody"><tr><td colspan="2" class="text-center text-muted py-4">Select month/year and click Load</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ TAB 3: Tasks by Student ═══ -->
+        <div class="tab-pane fade" id="paneTasks" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <span class="fw-bold small"><i class="fas fa-tasks me-1"></i>Tasks by Student</span>
+                    <button class="btn btn-primary btn-sm" onclick="loadTasks()"><i class="fas fa-sync me-1"></i>Refresh</button>
+                </div>
+                <div class="card-body" id="tasksContainer">
+                    <p class="text-muted text-center py-4">Click Refresh to load tasks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+var tlId = @(tl?.Id ?? 0);
+
+// ── Init date pickers with SAST ──
+(function() {
+    var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Johannesburg' }));
+    var y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
+    document.getElementById('attDate').value = y+'-'+m+'-'+d;
+    document.getElementById('tsMonth').value = now.getMonth()+1;
+    document.getElementById('tsYear').value = y;
+})();
+
+function switchTL(id) { window.location.href = '/TeamLeader/Dashboard/' + id; }
+
+// ═══ TAB 1: Day Records ═══
+var dayData = [];
+async function loadDayRecords() {
+    var date = document.getElementById('attDate').value;
+    if (!date) return;
+    document.getElementById('attBody').innerHTML = '<tr><td colspan="7" class="text-center py-3"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>';
+    try {
+        var res = await fetch('/TeamLeader/DayRecords?teamLeaderId='+tlId+'&date='+date);
+        dayData = await res.json();
+        renderAttTable();
+    } catch(e) { document.getElementById('attBody').innerHTML = '<tr><td colspan="7" class="text-center text-danger py-3">Error loading</td></tr>'; }
+}
+
+function renderAttTable() {
+    var q = (document.getElementById('attSearch').value||'').toLowerCase();
+    var filtered = dayData.filter(function(r) { return !q || r.studentName.toLowerCase().includes(q); });
+    if (!filtered.length) { document.getElementById('attBody').innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">No records found</td></tr>'; return; }
+    document.getElementById('attBody').innerHTML = filtered.map(function(r) {
+        var badgeClass = r.status === 'Present' ? 'bg-success' : r.status === 'Late' ? 'bg-warning text-dark' : r.status === 'Absent' ? 'bg-danger' : 'bg-secondary';
+        return '<tr>' +
+            '<td data-label="Student"><strong>' + r.studentName + '</strong></td>' +
+            '<td data-label="Status"><span class="badge ' + badgeClass + '">' + r.status + '</span></td>' +
+            '<td data-label="Clock In">' + r.clockIn + '</td>' +
+            '<td data-label="Clock Out">' + r.clockOut + '</td>' +
+            '<td data-label="Hours">' + r.hours + '</td>' +
+            '<td data-label="Location"><small>' + (r.address||'').substring(0,40) + '</small></td>' +
+            '<td data-label="Device"><small>' + r.device + '</small></td>' +
+            '</tr>';
+    }).join('');
+}
+function filterAttTable() { renderAttTable(); }
+
+// ═══ TAB 2: Monthly Timesheet ═══
+var tsData = null;
+async function loadTimesheet() {
+    var month = document.getElementById('tsMonth').value;
+    var year = document.getElementById('tsYear').value;
+    document.getElementById('tsBody').innerHTML = '<tr><td colspan="2" class="text-center py-3"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>';
+    try {
+        var res = await fetch('/TeamLeader/MonthlyTimesheet?teamLeaderId='+tlId+'&year='+year+'&month='+month);
+        tsData = await res.json();
+        renderTimesheet();
+    } catch(e) { document.getElementById('tsBody').innerHTML = '<tr><td colspan="2" class="text-center text-danger py-3">Error loading</td></tr>'; }
+}
+
+function renderTimesheet() {
+    if (!tsData || !tsData.students) return;
+    // Header: Student | 1 | 2 | 3 | ... | Total Hrs | Present | Absent
+    var hdr = '<tr><th style="position:sticky;left:0;background:#f8f9fa;z-index:2;min-width:130px;">Student</th>';
+    for (var d = 1; d <= tsData.daysInMonth; d++) hdr += '<th class="text-center" style="min-width:40px;">' + d + '</th>';
+    hdr += '<th class="text-center" style="min-width:60px;">Total Hrs</th><th class="text-center">Present</th><th class="text-center">Absent</th></tr>';
+    document.getElementById('tsHead').innerHTML = hdr;
+
+    document.getElementById('tsBody').innerHTML = tsData.students.map(function(s) {
+        var row = '<tr><td style="position:sticky;left:0;background:#fff;z-index:1;white-space:nowrap;"><strong>' + s.name + '</strong></td>';
+        for (var d = 0; d < tsData.daysInMonth; d++) {
+            var cell = s.days[d];
+            var bg = '', txt = '';
+            if (cell && cell.status === 'Present') { bg = '#d1fae5'; txt = cell.clockIn || 'P'; }
+            else if (cell && cell.status === 'Late') { bg = '#fef3c7'; txt = cell.clockIn || 'L'; }
+            else if (cell && cell.status === 'Absent') { bg = '#fee2e2'; txt = 'A'; }
+            else if (cell && cell.status === 'Excused') { bg = '#e0e7ff'; txt = 'E'; }
+            else { bg = '#f8f9fa'; txt = '-'; }
+            row += '<td class="text-center" style="background:'+bg+';font-size:0.6rem;" title="'+(cell&&cell.clockIn?cell.clockIn+' - '+(cell.clockOut||'?'):'')+'">' + txt + '</td>';
+        }
+        row += '<td class="text-center fw-bold">' + s.totalHours + '</td>';
+        row += '<td class="text-center text-success">' + s.presentDays + '</td>';
+        row += '<td class="text-center text-danger">' + s.absentDays + '</td>';
+        row += '</tr>';
+        return row;
+    }).join('');
+}
+
+function exportTimesheetPdf() {
+    if (!tsData) { alert('Load timesheet first'); return; }
+    if (typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined') { alert('PDF library not loaded'); return; }
+    var doc = new (window.jspdf || jspdf).jsPDF('landscape','mm','a3');
+    doc.setFontSize(14);
+    var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    doc.text('Monthly Timesheet - ' + monthNames[tsData.month-1] + ' ' + tsData.year, 14, 16);
+    doc.setFontSize(8);
+
+    var headers = [['Student']];
+    for (var d = 1; d <= tsData.daysInMonth; d++) headers[0].push(String(d));
+    headers[0].push('Hours','Present','Absent');
+
+    var rows = tsData.students.map(function(s) {
+        var r = [s.name];
+        for (var d = 0; d < tsData.daysInMonth; d++) {
+            var c = s.days[d];
+            r.push(c && c.status ? (c.status === 'Present' ? 'P' : c.status === 'Late' ? 'L' : c.status === 'Absent' ? 'A' : 'E') : '-');
+        }
+        r.push(String(s.totalHours), String(s.presentDays), String(s.absentDays));
+        return r;
+    });
+
+    doc.autoTable({ head: headers, body: rows, startY: 22, styles: { fontSize: 5, cellPadding: 1 }, headStyles: { fillColor: [30,41,59] } });
+    doc.save('Timesheet_' + tsData.year + '_' + String(tsData.month).padStart(2,'0') + '.pdf');
+}
+
+// ═══ TAB 3: Tasks by Student ═══
+async function loadTasks() {
+    document.getElementById('tasksContainer').innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm"></div> Loading...</div>';
+    try {
+        var res = await fetch('/TeamLeader/TasksByStudent?teamLeaderId='+tlId);
+        var data = await res.json();
+        if (!data.length) { document.getElementById('tasksContainer').innerHTML = '<p class="text-muted text-center py-4">No students found</p>'; return; }
+        document.getElementById('tasksContainer').innerHTML = data.map(function(s) {
+            var tasks = s.tasks && s.tasks.length ? '<table class="table table-sm mb-0 small"><thead><tr><th>Task</th><th>Status</th><th>Priority</th><th>Due</th></tr></thead><tbody>' +
+                s.tasks.map(function(t) {
+                    var sc = t.status === 'Completed' ? 'text-success' : t.isOverdue ? 'text-danger fw-bold' : '';
+                    return '<tr class="'+sc+'"><td>'+t.title+'</td><td><span class="badge bg-'+(t.status==='Completed'?'success':t.status==='InProgress'?'primary':'secondary')+'">'+t.status+'</span></td><td>'+t.priority+'</td><td>'+(t.isOverdue?'<i class="fas fa-exclamation-triangle text-danger me-1"></i>':'')+t.dueDate+'</td></tr>';
+                }).join('') + '</tbody></table>' : '<p class="text-muted small mb-0">No tasks assigned</p>';
+            return '<div class="mb-3"><div class="fw-bold small mb-1"><i class="fas fa-user-graduate me-1 text-primary"></i>' + s.name + ' <span class="badge bg-primary ms-1">' + (s.tasks?s.tasks.length:0) + ' tasks</span></div>' + tasks + '</div>';
+        }).join('<hr class="my-2">');
+    } catch(e) { document.getElementById('tasksContainer').innerHTML = '<p class="text-danger text-center py-4">Error loading tasks</p>'; }
+}
+
+// Auto-load attendance for today
+loadDayRecords();
+</script>
+}

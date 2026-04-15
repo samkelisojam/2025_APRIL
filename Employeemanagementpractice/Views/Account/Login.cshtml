@@ -31,8 +31,10 @@
             </div>
 
             <div class="mb-3 form-check">
-                <input asp-for="RememberMe" class="form-check-input" />
-                <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                <input asp-for="RememberMe" class="form-check-input" id="rememberMe" />
+                <label asp-for="RememberMe" class="form-check-label">
+                    Remember me <small class="text-muted">(stay signed in for 30 days)</small>
+                </label>
             </div>
 
             <button type="submit" class="btn btn-primary w-100 mb-3">

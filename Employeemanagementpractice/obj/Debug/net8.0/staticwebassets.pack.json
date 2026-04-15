@@ -17,6 +17,38 @@
       "PackagePath": "staticwebassets\\images\\ba-academy-logo.svg"
     },
     {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-128x128.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-128x128.svg"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-144x144.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-144x144.svg"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-152x152.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-152x152.svg"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-192x192.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-192x192.svg"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-384x384.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-384x384.svg"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-512x512.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-512x512.svg"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-72x72.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-72x72.svg"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\images\\icons\\icon-96x96.svg",
+      "PackagePath": "staticwebassets\\images\\icons\\icon-96x96.svg"
+    },
+    {
       "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
@@ -247,6 +279,18 @@
     {
       "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\manifest.json",
+      "PackagePath": "staticwebassets\\manifest.json"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\offline.html",
+      "PackagePath": "staticwebassets\\offline.html"
+    },
+    {
+      "Id": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\wwwroot\\sw.js",
+      "PackagePath": "staticwebassets\\sw.js"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Employeemanagementpractice.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

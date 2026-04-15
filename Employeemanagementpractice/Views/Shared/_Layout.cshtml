@@ -2,7 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BA Academy" />
+    <meta name="application-name" content="BA Academy" />
+    <meta name="theme-color" content="#0d6efd" />
+    <meta name="msapplication-TileColor" content="#1e293b" />
+    <meta name="msapplication-navbutton-color" content="#0d6efd" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-192x192.svg" />
     <title>@ViewData["Title"] - BA Academy</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -79,6 +89,14 @@
                                 <i class="fas fa-tasks me-1"></i>Tasks
                             </a>
                         </li>
+                        @if (isTeamLeader || isAdminOrManager || isStaff)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link px-2 @(currentController == "TeamLeader" && currentAction == "Dashboard" ? "active" : "")" href="@Url.Action("Dashboard","TeamLeader")" style="font-size:0.8rem;">
+                                    <i class="fas fa-clipboard-list me-1"></i>TL Dashboard
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link px-2 @(currentController == "Announcement" ? "active" : "")" href="@Url.Action("Index","Announcement")" style="font-size:0.8rem;">
                                 <i class="fas fa-bullhorn me-1"></i>Announcements
@@ -119,7 +137,7 @@
                             </li>
                         }
 
-                        <!-- ── Admin/Manager panel ── -->
+                     
                         } @* end else (non-student nav) *@
 
                         @if (isAdminOrManager)
@@ -231,9 +249,10 @@
 
             <!-- Footer -->
             <footer class="text-center py-2 text-muted border-top mt-4" style="background:#f8fafc;font-size:0.7rem;">
-                <i class="fas fa-shield-alt me-1 text-primary"></i> BA Academy &copy; @DateTime.Now.Year
+                <i class="fas fa-shield-alt me-1 text-primary"></i> BA Academy &copy; @Employeemanagementpractice.Services.SastClock.Now.Year
                 <span class="mx-1">|</span> ASP.NET Core 8.0
                 <span class="mx-1">|</span> SQL Server
+                <span class="mx-1">|</span> <span id="screenSizeLabel" class="badge bg-secondary" style="font-size:0.55rem;"></span>
             </footer>
         </div>
 
@@ -280,5 +299,97 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- PWA Service Worker Registration + Install Prompt + Screen Detection -->
+    <script>
+    // ── Register Service Worker for PWA ──
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                console.log('SW registered, scope:', reg.scope);
+            }).catch(function(err) {
+                console.log('SW registration failed:', err);
+            });
+        });
+    }
+
+    // ── PWA Install Prompt ──
+    var deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallBanner();
+    });
+
+    function showInstallBanner() {
+        // Don't show if already installed or dismissed recently
+        if (window.matchMedia('(display-mode: standalone)').matches) return;
+        if (sessionStorage.getItem('pwa-install-dismissed')) return;
+
+        var banner = document.createElement('div');
+        banner.id = 'pwaInstallBanner';
+        banner.innerHTML = '<div class="pwa-install-banner">' +
+            '<div class="d-flex align-items-center gap-2">' +
+            '<i class="fas fa-mobile-alt fa-lg text-primary"></i>' +
+            '<div><strong>Install BA Academy</strong><br><small class="text-muted">Add to your home screen for quick access</small></div>' +
+            '</div>' +
+            '<div class="d-flex gap-2">' +
+            '<button class="btn btn-primary btn-sm" id="btnInstallPwa"><i class="fas fa-download me-1"></i>Install</button>' +
+            '<button class="btn btn-outline-secondary btn-sm" id="btnDismissPwa"><i class="fas fa-times"></i></button>' +
+            '</div></div>';
+        document.body.appendChild(banner);
+
+        document.getElementById('btnInstallPwa').addEventListener('click', function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function(result) {
+                    deferredPrompt = null;
+                    banner.remove();
+                });
+            }
+        });
+        document.getElementById('btnDismissPwa').addEventListener('click', function() {
+            banner.remove();
+            sessionStorage.setItem('pwa-install-dismissed', 'true');
+        });
+    }
+
+    // Also show iOS install hint
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isIOS && !isStandalone && !sessionStorage.getItem('ios-install-dismissed')) {
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var hint = document.createElement('div');
+                hint.id = 'iosInstallHint';
+                hint.innerHTML = '<div class="pwa-install-banner">' +
+                    '<div class="d-flex align-items-center gap-2">' +
+                    '<i class="fas fa-share-square fa-lg text-primary"></i>' +
+                    '<div><strong>Install BA Academy</strong><br><small>Tap <i class="fas fa-share-square"></i> then "Add to Home Screen"</small></div>' +
+                    '</div>' +
+                    '<button class="btn btn-outline-secondary btn-sm" onclick="this.closest(\'#iosInstallHint\').remove();sessionStorage.setItem(\'ios-install-dismissed\',\'true\');"><i class="fas fa-times"></i></button>' +
+                    '</div>';
+                document.body.appendChild(hint);
+            }, 3000);
+        });
+    }
+
+    // ── Screen Size Detection ──
+    function detectScreenSize() {
+        var w = window.innerWidth;
+        var body = document.body;
+        body.classList.remove('screen-mobile', 'screen-tablet', 'screen-laptop', 'screen-desktop');
+        var label = '';
+        if (w < 576) { body.classList.add('screen-mobile'); label = 'Mobile (' + w + 'px)'; }
+        else if (w < 992) { body.classList.add('screen-tablet'); label = 'Tablet (' + w + 'px)'; }
+        else if (w < 1400) { body.classList.add('screen-laptop'); label = 'Laptop (' + w + 'px)'; }
+        else { body.classList.add('screen-desktop'); label = 'Desktop (' + w + 'px)'; }
+        body.dataset.screenSize = w < 576 ? 'mobile' : w < 992 ? 'tablet' : w < 1400 ? 'laptop' : 'desktop';
+        var el = document.getElementById('screenSizeLabel');
+        if (el) el.textContent = label;
+    }
+    detectScreenSize();
+    window.addEventListener('resize', detectScreenSize);
+    </script>
 </body>
 </html>

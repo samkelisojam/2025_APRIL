@@ -56,25 +56,25 @@
                     var pct = tl.MaxStudents > 0 ? (int)((double)tl.Students.Count(x => x.IsActive) / tl.MaxStudents * 100) : 0;
                     var barColor = pct >= 90 ? "bg-danger" : pct >= 70 ? "bg-warning" : "bg-success";
                     <tr>
-                        <td><span class="badge bg-light text-dark fw-bold">@tl.EmployeeNumber</span></td>
-                        <td>
+                        <td data-label="Emp No"><span class="badge bg-light text-dark fw-bold">@tl.EmployeeNumber</span></td>
+                        <td data-label="Name">
                             <a href="@Url.Action("Details", new { id = tl.Id })" class="text-decoration-none fw-bold">
                                 <i class="fas fa-user-tie me-1 text-primary"></i>@tl.User.FullName
                             </a>
                         </td>
-                        <td><small class="text-muted">@tl.User.Email</small></td>
-                        <td>@(tl.Department ?? "—")</td>
-                        <td>
+                        <td data-label="Email"><small class="text-muted">@tl.User.Email</small></td>
+                        <td data-label="Department">@(tl.Department ?? "—")</td>
+                        <td data-label="Students">
                             <a href="@Url.Action("Students", new { id = tl.Id })" class="text-decoration-none">
                                 <span class="badge bg-primary">@tl.Students.Count(x => x.IsActive)</span> / @tl.MaxStudents
                             </a>
                         </td>
-                        <td style="min-width:120px;">
+                        <td data-label="Capacity" style="min-width:120px;">
                             <div class="progress progress-thin"><div class="progress-bar @barColor" style="width:@pct%"></div></div>
                             <small class="text-muted">@pct%</small>
                         </td>
-                        <td><span class="badge @(tl.IsActive ? "bg-success" : "bg-secondary") badge-status">@(tl.IsActive ? "Active" : "Inactive")</span></td>
-                        <td>
+                        <td data-label="Status"><span class="badge @(tl.IsActive ? "bg-success" : "bg-secondary") badge-status">@(tl.IsActive ? "Active" : "Inactive")</span></td>
+                        <td data-label="Actions">
                             <div class="btn-group btn-group-sm">
                                 <a href="@Url.Action("Details", new { id = tl.Id })" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Details">
                                     <i class="fas fa-eye"></i>
