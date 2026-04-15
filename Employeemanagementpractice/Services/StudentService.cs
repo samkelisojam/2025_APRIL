@@ -1,6 +1,7 @@
 using Employeemanagementpractice.Data;
 using Employeemanagementpractice.Models;
 using Employeemanagementpractice.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,14 +27,19 @@ namespace Employeemanagementpractice.Services
         private readonly IAuditService _audit;
         private readonly ISaIdValidationService _saIdService;
         private readonly IFileStorageService _fileStorage;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public StudentService(ApplicationDbContext context, IAuditService audit,
-            ISaIdValidationService saIdService, IFileStorageService fileStorage)
+            ISaIdValidationService saIdService, IFileStorageService fileStorage,
+            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _audit = audit;
             _saIdService = saIdService;
             _fileStorage = fileStorage;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<(List<Student> Items, int TotalCount, int TotalPages)> SearchStudentsAsync(
@@ -117,6 +123,43 @@ namespace Employeemanagementpractice.Services
             await _audit.LogAsync(currentUserId, currentUserName, "Create", "Student",
                 student.Id.ToString(), newValues: new { model.FirstName, model.LastName, model.SAIDNumber },
                 description: $"Registered student: {model.FirstName} {model.LastName}");
+
+            // ── Auto-create login account for the student ──
+            if (!string.IsNullOrEmpty(model.Email))
+            {
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser == null)
+                {
+                    var newUser = new ApplicationUser
+                    {
+                        UserName = model.Email,
+                        Email = model.Email,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        EmailConfirmed = true,
+                        IsActive = true,
+                        MustChangePassword = true,
+                        PasswordChangeDeadline = DateTime.UtcNow.AddDays(3),
+                        SecurityPin = "202612345678",
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    var createResult = await _userManager.CreateAsync(newUser, "Student@1234");
+                    if (createResult.Succeeded)
+                    {
+                        if (!await _roleManager.RoleExistsAsync("Student"))
+                            await _roleManager.CreateAsync(new IdentityRole("Student"));
+                        await _userManager.AddToRoleAsync(newUser, "Student");
+                        student.UserId = newUser.Id;
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    // Link existing user
+                    student.UserId = existingUser.Id;
+                    await _context.SaveChangesAsync();
+                }
+            }
 
             return ServiceResult<int>.Ok(student.Id);
         }

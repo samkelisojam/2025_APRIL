@@ -10,7 +10,10 @@
             <a href="@Url.Action("Details", new { id = tl?.Id })" class="text-decoration-none text-muted" style="font-size:0.75rem;"><i class="fas fa-arrow-left me-1"></i>Back to @tl?.User.FullName</a>
             <h2 class="mt-1" style="font-size:1.1rem;"><i class="fas fa-users me-2"></i>@tl?.User.FullName's Students</h2>
         </div>
-        <a href="@Url.Action("Create","Student", new { teamLeaderId = tl?.Id })" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Student</a>
+        @if (!User.IsInRole("ReadOnly"))
+        {
+            <a href="@Url.Action("Create","Student", new { teamLeaderId = tl?.Id })" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Student</a>
+        }
     </div>
 
     <!-- Filter -->
@@ -45,7 +48,10 @@
                         <td>@(s.City ?? "—")</td>
                         <td>
                             <a href="@Url.Action("Profile","Student",new{id=s.Id})" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                            <a href="@Url.Action("Edit","Student",new{id=s.Id})" class="btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></a>
+                            @if (!User.IsInRole("ReadOnly"))
+                            {
+                                <a href="@Url.Action("Edit","Student",new{id=s.Id})" class="btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></a>
+                            }
                         </td>
                     </tr>
                 }

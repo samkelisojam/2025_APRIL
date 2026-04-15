@@ -60,6 +60,7 @@ builder.Services.AddScoped<ICalendarService, CalendarService>();
 builder.Services.AddScoped<IBatchImportService, BatchImportService>();
 builder.Services.AddScoped<ISystemHealthService, SystemHealthService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IDailyDiaryService, DailyDiaryService>();
 builder.Services.AddScoped<IStudentCardService, StudentCardService>();
 builder.Services.AddScoped<IUserActivityService, UserActivityService>();
 builder.Services.AddHttpContextAccessor();
@@ -81,7 +82,7 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
     // ── Roles ──
-    string[] roles = { "Admin", "Manager", "TeamLeader", "Staff", "ReadOnly" };
+    string[] roles = { "Admin", "Manager", "TeamLeader", "Staff", "ReadOnly", "Student" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
@@ -270,9 +271,86 @@ using (var scope = app.Services.CreateScope())
                 MaritalStatus = MaritalStatus.Single, DisabilityStatus = DisabilityStatus.None,
                 Skills = "Python, C#, SQL, Web Development", HasOwnTransport = false,
                 Notes = "Top candidate for IT placement"
+            },
+            new Student
+            {
+                TeamLeaderId = tl1.Id, FirstName = "Thabo", LastName = "Mokoena", SAIDNumber = "9902185800096",
+                Gender = Gender.Male, Race = Race.Black, Nationality = "South African", HomeLanguage = "Sotho",
+                DateOfBirth = new DateTime(1999, 2, 18), Email = "thabo.mokoena@email.co.za", Phone = "0712345011",
+                StreetAddress = "22 Commissioner St", Suburb = "Marshalltown", City = "Johannesburg", Province = Province.Gauteng, PostalCode = "2001",
+                QualificationType = "Diploma", QualificationName = "Electrical Engineering", Institution = "VUT", YearCompleted = 2022,
+                BankName = "Capitec", BankAccountNumber = "1234567011", BankBranchCode = "470010", AccountType = "Savings", AccountHolderName = "Thabo Mokoena",
+                NextOfKinName = "Mpho Mokoena", NextOfKinRelationship = "Mother", NextOfKinPhone = "0823456011",
+                MaritalStatus = MaritalStatus.Single, DisabilityStatus = DisabilityStatus.None,
+                Skills = "Electrical Wiring, AutoCAD, Project Planning", HasOwnTransport = false
+            },
+            new Student
+            {
+                TeamLeaderId = tl2.Id, FirstName = "Lindiwe", LastName = "Dlamini", SAIDNumber = "0103155100097",
+                Gender = Gender.Female, Race = Race.Black, Nationality = "South African", HomeLanguage = "Swati",
+                DateOfBirth = new DateTime(2001, 3, 15), Email = "lindiwe.dlamini@email.co.za", Phone = "0712345012",
+                StreetAddress = "8 Samora Machel Dr", Suburb = "Mbombela CBD", City = "Nelspruit", Province = Province.Mpumalanga, PostalCode = "1201",
+                QualificationType = "Degree", QualificationName = "Education", Institution = "Unisa", YearCompleted = 2023,
+                BankName = "FNB", BankAccountNumber = "62845012345", BankBranchCode = "250655", AccountType = "Savings", AccountHolderName = "Lindiwe Dlamini",
+                NextOfKinName = "Thembi Dlamini", NextOfKinRelationship = "Sister", NextOfKinPhone = "0823456012",
+                MaritalStatus = MaritalStatus.Single, DisabilityStatus = DisabilityStatus.None,
+                Skills = "Teaching, Curriculum Design, Child Development", HasOwnTransport = false
+            },
+            new Student
+            {
+                TeamLeaderId = tl2.Id, FirstName = "Sipho", LastName = "Mthembu", SAIDNumber = "9807225800098",
+                Gender = Gender.Male, Race = Race.Black, Nationality = "South African", HomeLanguage = "Zulu",
+                DateOfBirth = new DateTime(1998, 7, 22), Email = "sipho.mthembu@email.co.za", Phone = "0712345013",
+                StreetAddress = "41 West St", Suburb = "Durban Central", City = "Durban", Province = Province.KwaZuluNatal, PostalCode = "4001",
+                QualificationType = "Certificate", QualificationName = "Welding", Institution = "Coastal KZN TVET", YearCompleted = 2021,
+                BankName = "Standard Bank", BankAccountNumber = "001234513", BankBranchCode = "051001", AccountType = "Savings", AccountHolderName = "Sipho Mthembu",
+                NextOfKinName = "Bongani Mthembu", NextOfKinRelationship = "Brother", NextOfKinPhone = "0823456013",
+                MaritalStatus = MaritalStatus.Married, DisabilityStatus = DisabilityStatus.None,
+                Skills = "Arc Welding, MIG Welding, Metal Fabrication", HasOwnTransport = true, DriversLicense = "Code B",
+                PreviousEmployer = "SA Steelworks", PreviousJobTitle = "Welder Assistant", YearsExperience = 2
+            },
+            new Student
+            {
+                TeamLeaderId = tl3.Id, FirstName = "Zanele", LastName = "Khumalo", SAIDNumber = "0006285100099",
+                Gender = Gender.Female, Race = Race.Black, Nationality = "South African", HomeLanguage = "Zulu",
+                DateOfBirth = new DateTime(2000, 6, 28), Email = "zanele.khumalo@email.co.za", Phone = "0712345014",
+                StreetAddress = "55 Pixley Ka Seme St", Suburb = "Pietermaritzburg", City = "Pietermaritzburg", Province = Province.KwaZuluNatal, PostalCode = "3201",
+                QualificationType = "Diploma", QualificationName = "Graphic Design", Institution = "DUT", YearCompleted = 2023,
+                BankName = "Nedbank", BankAccountNumber = "1098765014", BankBranchCode = "198765", AccountType = "Savings", AccountHolderName = "Zanele Khumalo",
+                NextOfKinName = "Nkosazana Khumalo", NextOfKinRelationship = "Mother", NextOfKinPhone = "0823456014",
+                MaritalStatus = MaritalStatus.Single, DisabilityStatus = DisabilityStatus.None,
+                Skills = "Adobe Photoshop, Illustrator, InDesign, UI/UX", HasOwnTransport = false,
+                Notes = "Portfolio winner at DUT design showcase 2023"
+            },
+            new Student
+            {
+                TeamLeaderId = tl3.Id, FirstName = "Kagiso", LastName = "Molefe", SAIDNumber = "9904125800100",
+                Gender = Gender.Male, Race = Race.Black, Nationality = "South African", HomeLanguage = "Tswana",
+                DateOfBirth = new DateTime(1999, 4, 12), Email = "kagiso.molefe@email.co.za", Phone = "0712345015",
+                StreetAddress = "10 Beyers Naude Dr", Suburb = "Mafikeng", City = "Mahikeng", Province = Province.NorthWest, PostalCode = "2745",
+                QualificationType = "Degree", QualificationName = "Agriculture Management", Institution = "NWU", YearCompleted = 2022,
+                BankName = "ABSA", BankAccountNumber = "4089765015", BankBranchCode = "632005", AccountType = "Current", AccountHolderName = "Kagiso Molefe",
+                NextOfKinName = "Tshepiso Molefe", NextOfKinRelationship = "Father", NextOfKinPhone = "0823456015",
+                MaritalStatus = MaritalStatus.Single, DisabilityStatus = DisabilityStatus.None,
+                Skills = "Crop Management, Irrigation Systems, Agri-business", HasOwnTransport = true, DriversLicense = "Code EB",
+                PreviousEmployer = "NW Dept of Agriculture", PreviousJobTitle = "Field Officer Intern", YearsExperience = 1
             }
         };
         db.Students.AddRange(students);
+        await db.SaveChangesAsync();
+
+        // ── 7b. CREATE USER ACCOUNTS FOR STUDENTS ──
+        foreach (var student in students)
+        {
+            if (!string.IsNullOrEmpty(student.Email))
+            {
+                var studentUser = await EnsureUser(student.Email, student.FirstName, student.LastName, "Student@1234", "Student");
+                studentUser.MustChangePassword = true;
+                studentUser.PasswordChangeDeadline = DateTime.UtcNow.AddDays(3);
+                await userManager.UpdateAsync(studentUser);
+                student.UserId = studentUser.Id;
+            }
+        }
         await db.SaveChangesAsync();
 
         // ── 8. PAYROLL RECORDS ──
@@ -440,6 +518,44 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Force password change middleware for students
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        var path = context.Request.Path.Value?.ToLower() ?? "";
+        // Skip if already on change-password, logout, or static files
+        if (!path.Contains("/account/changepassword") && !path.Contains("/account/logout") &&
+            !path.StartsWith("/lib/") && !path.StartsWith("/css/") && !path.StartsWith("/js/") &&
+            !path.StartsWith("/images/") && !path.StartsWith("/favicon"))
+        {
+            var um = context.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = await um.GetUserAsync(context.User);
+            if (user != null)
+            {
+                // Check if deadline passed and password not changed → lock account
+                if (user.MustChangePassword && user.PasswordChangeDeadline.HasValue &&
+                    DateTime.UtcNow > user.PasswordChangeDeadline.Value)
+                {
+                    user.IsLocked = true;
+                    user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(100);
+                    await um.UpdateAsync(user);
+                    await um.UpdateSecurityStampAsync(user);
+                    context.Response.Redirect("/Account/Login");
+                    return;
+                }
+                // Redirect to change password page
+                if (user.MustChangePassword)
+                {
+                    context.Response.Redirect("/Account/ChangePassword");
+                    return;
+                }
+            }
+        }
+    }
+    await next();
+});
 
 // Track user activity (page views, downloads)
 app.UseMiddleware<Employeemanagementpractice.Services.ActivityTrackingMiddleware>();

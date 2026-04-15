@@ -142,7 +142,7 @@ namespace Employeemanagementpractice.Models
     }
 
     // ═══════════════════════════════════════════
-    // 9. ATTENDANCE TRACKING
+    // 9. ATTENDANCE TRACKING (Clock In/Out with Geolocation)
     // ═══════════════════════════════════════════
     public class AttendanceRecord
     {
@@ -161,6 +161,32 @@ namespace Employeemanagementpractice.Models
         [MaxLength(20)]
         public string Status { get; set; } = "Present"; // Present, Absent, Late, Excused, HalfDay
 
+        // Clock In details
+        public DateTime? ClockInTime { get; set; }
+        public double? ClockInLatitude { get; set; }
+        public double? ClockInLongitude { get; set; }
+        [MaxLength(500)]
+        public string? ClockInAddress { get; set; }
+        [MaxLength(300)]
+        public string? ClockInDeviceName { get; set; }
+        [MaxLength(500)]
+        public string? ClockInSelfieUrl { get; set; }
+
+        // Clock Out details
+        public DateTime? ClockOutTime { get; set; }
+        public double? ClockOutLatitude { get; set; }
+        public double? ClockOutLongitude { get; set; }
+        [MaxLength(500)]
+        public string? ClockOutAddress { get; set; }
+        [MaxLength(300)]
+        public string? ClockOutDeviceName { get; set; }
+        [MaxLength(500)]
+        public string? ClockOutSelfieUrl { get; set; }
+
+        // Hours worked (calculated)
+        public double? HoursWorked { get; set; }
+
+        // Legacy compat
         public TimeSpan? CheckInTime { get; set; }
         public TimeSpan? CheckOutTime { get; set; }
 
@@ -168,9 +194,55 @@ namespace Employeemanagementpractice.Models
         public string? Notes { get; set; }
 
         [MaxLength(200)]
-        public string? MarkedBy { get; set; }
+        public string? MarkedBy { get; set; } // null = self, otherwise who marked on behalf
+
+        public bool IsMarkedByProxy { get; set; } // true if team leader marked on behalf
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation
+        public DailyDiary? DailyDiary { get; set; }
+    }
+
+    // ═══════════════════════════════════════════
+    // 9b. DAILY DIARY (linked to Attendance)
+    // ═══════════════════════════════════════════
+    public class DailyDiary
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int StudentId { get; set; }
+
+        [ForeignKey("StudentId")]
+        public Student Student { get; set; } = null!;
+
+        public int? AttendanceRecordId { get; set; }
+
+        [ForeignKey("AttendanceRecordId")]
+        public AttendanceRecord? AttendanceRecord { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
+
+        [MaxLength(2000)]
+        public string? Activities { get; set; }
+
+        [MaxLength(2000)]
+        public string? Achievements { get; set; }
+
+        [MaxLength(2000)]
+        public string? Challenges { get; set; }
+
+        [MaxLength(2000)]
+        public string? PlannedForTomorrow { get; set; }
+
+        [MaxLength(500)]
+        public string? SupervisorComment { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
     }
 
     // ═══════════════════════════════════════════

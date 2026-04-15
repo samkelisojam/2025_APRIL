@@ -23,6 +23,10 @@ namespace Employeemanagementpractice.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var roles = await _userManager.GetRolesAsync(currentUser!);
+
+            if (roles.Contains("Student"))
+                return RedirectToAction("Index", "StudentPortal");
+
             var role = roles.Contains("Admin") ? "Admin" : roles.Contains("Manager") ? "Manager"
                 : roles.Contains("Staff") ? "Staff" : roles.Contains("TeamLeader") ? "TeamLeader" : "ReadOnly";
 

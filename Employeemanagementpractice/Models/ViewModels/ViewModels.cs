@@ -17,6 +17,23 @@ namespace Employeemanagementpractice.Models.ViewModels
         public string? OtpCode { get; set; }
     }
 
+    public class ChangePasswordViewModel
+    {
+        [Required(ErrorMessage = "Current password is required")]
+        [DataType(DataType.Password)]
+        public string CurrentPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "New password is required")]
+        [DataType(DataType.Password)]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
+        public string NewPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please confirm your new password")]
+        [DataType(DataType.Password)]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
     public class RegisterUserViewModel
     {
         [Required, MaxLength(100)]

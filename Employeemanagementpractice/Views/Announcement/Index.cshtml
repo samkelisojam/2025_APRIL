@@ -1,8 +1,8 @@
 @model List<Employeemanagementpractice.Models.Announcement>
 @{
     ViewData["Title"] = "Announcements";
-    var canCreate = ViewBag.CanCreate == true;
-    var canDelete = User.IsInRole("Admin") || User.IsInRole("Manager");
+    var canCreate = ViewBag.CanCreate == true && !User.IsInRole("ReadOnly");
+    var canDelete = (User.IsInRole("Admin") || User.IsInRole("Manager")) && !User.IsInRole("ReadOnly");
 }
 
 <div class="fade-in">

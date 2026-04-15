@@ -1,0 +1,371 @@
+@{
+    ViewData["Title"] = "Student Portal";
+    var student = ViewBag.Student as Employeemanagementpractice.Models.Student;
+    var todayRecord = ViewBag.TodayRecord as Employeemanagementpractice.Models.AttendanceRecord;
+    var diary = ViewBag.Diary as Employeemanagementpractice.Models.DailyDiary;
+    var history = ViewBag.History as List<Employeemanagementpractice.Models.AttendanceRecord> ?? new();
+    var hasClockedIn = todayRecord?.ClockInTime != null;
+    var hasClockedOut = todayRecord?.ClockOutTime != null;
+}
+
+<div class="fade-in">
+    <!-- Welcome Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-0"><i class="fas fa-user-graduate text-primary me-2"></i>Welcome, @student?.FullName</h4>
+            <p class="text-muted mb-0 small">@DateTime.Now.ToString("dddd, dd MMMM yyyy") &bull; Team Leader: <strong>@student?.TeamLeader?.User?.FullName</strong></p>
+        </div>
+        <a href="@Url.Action("History")" class="btn btn-outline-primary btn-sm"><i class="fas fa-history me-1"></i>View History</a>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3">
+                <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+                <h6 class="text-muted mb-1">Today</h6>
+                <span class="fw-bold fs-5" id="todayStatus">
+                    @if (hasClockedOut) { <span class="text-success">Complete</span> }
+                    else if (hasClockedIn) { <span class="text-warning">Clocked In</span> }
+                    else { <span class="text-secondary">Not Started</span> }
+                </span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3">
+                <i class="fas fa-sign-in-alt fa-2x text-success mb-2"></i>
+                <h6 class="text-muted mb-1">Clock In</h6>
+                <span class="fw-bold fs-5" id="clockInDisplay">@(todayRecord?.ClockInTime?.ToString("HH:mm") ?? "--:--")</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3">
+                <i class="fas fa-sign-out-alt fa-2x text-danger mb-2"></i>
+                <h6 class="text-muted mb-1">Clock Out</h6>
+                <span class="fw-bold fs-5" id="clockOutDisplay">@(todayRecord?.ClockOutTime?.ToString("HH:mm") ?? "--:--")</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3">
+                <i class="fas fa-hourglass-half fa-2x text-info mb-2"></i>
+                <h6 class="text-muted mb-1">Hours Worked</h6>
+                <span class="fw-bold fs-5" id="hoursDisplay">@(todayRecord?.HoursWorked?.ToString("F1") ?? "0.0") hrs</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Clock In/Out Panel -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-fingerprint me-2"></i>Attendance Clock</h6>
+                    <span class="badge bg-light text-dark" id="currentTime"></span>
+                </div>
+                <div class="card-body">
+                    <!-- Location Status -->
+                    <div class="alert alert-info py-2 small mb-3" id="locationStatus">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        <span id="locationText">Detecting location...</span>
+                    </div>
+
+                    <!-- Device Info -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 small text-muted">
+                        <span><i class="fas fa-mobile-alt me-1"></i>Device: <strong id="deviceName">Detecting...</strong></span>
+                        <span><i class="fas fa-wifi me-1"></i><span id="connectionStatus">Online</span></span>
+                    </div>
+
+                    <!-- Selfie Camera -->
+                    <div class="text-center mb-3">
+                        <div class="position-relative d-inline-block" style="max-width:320px;">
+                            <video id="cameraPreview" autoplay playsinline muted class="rounded border w-100" style="display:none;max-height:240px;"></video>
+                            <canvas id="selfieCanvas" style="display:none;"></canvas>
+                            <img id="capturedSelfie" class="rounded border w-100" style="display:none;max-height:240px;" />
+                            <div id="cameraPlaceholder" class="border rounded p-4 text-muted">
+                                <i class="fas fa-camera fa-3x mb-2 d-block opacity-50"></i>
+                                <small>Camera will activate for verification</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clock Buttons -->
+                    <div class="d-flex gap-3 justify-content-center">
+                        @if (!hasClockedIn)
+                        {
+                            <button class="btn btn-success btn-lg px-5" id="btnClockIn" onclick="startClockProcess('in')">
+                                <i class="fas fa-sign-in-alt me-2"></i>Clock In
+                            </button>
+                        }
+                        else if (!hasClockedOut)
+                        {
+                            <button class="btn btn-danger btn-lg px-5" id="btnClockOut" onclick="startClockProcess('out')">
+                                <i class="fas fa-sign-out-alt me-2"></i>Clock Out
+                            </button>
+                        }
+                        else
+                        {
+                            <div class="alert alert-success text-center w-100 mb-0">
+                                <i class="fas fa-check-circle fa-2x mb-2 d-block"></i>
+                                <strong>Attendance recorded for today!</strong><br/>
+                                <small>In: @todayRecord?.ClockInTime?.ToString("HH:mm") &bull; Out: @todayRecord?.ClockOutTime?.ToString("HH:mm") &bull; @todayRecord?.HoursWorked?.ToString("F1") hours</small>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Map -->
+                    <div class="mt-3" id="mapContainer" style="display:none;">
+                        <small class="text-muted"><i class="fas fa-map me-1"></i>Your location: <span id="addressDisplay">-</span></small>
+                        <div class="text-muted small mt-1">Lat: <span id="latDisplay">-</span> &bull; Lng: <span id="lngDisplay">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent History -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-bold"><i class="fas fa-calendar-alt me-2"></i>Recent Attendance (Last 7 days)</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0 small">
+                        <thead class="table-light"><tr><th>Date</th><th>Status</th><th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Device</th></tr></thead>
+                        <tbody>
+                            @foreach (var r in history.Take(7))
+                            {
+                                var badge = r.Status switch { "Present" => "bg-success", "Late" => "bg-warning text-dark", "Absent" => "bg-danger", _ => "bg-secondary" };
+                                <tr>
+                                    <td>@r.Date.ToString("ddd dd MMM")</td>
+                                    <td><span class="badge @badge">@r.Status</span> @if(r.IsMarkedByProxy){<small class="text-muted">(proxy)</small>}</td>
+                                    <td>@(r.ClockInTime?.ToString("HH:mm") ?? r.CheckInTime?.ToString(@"hh\:mm") ?? "-")</td>
+                                    <td>@(r.ClockOutTime?.ToString("HH:mm") ?? r.CheckOutTime?.ToString(@"hh\:mm") ?? "-")</td>
+                                    <td>@(r.HoursWorked?.ToString("F1") ?? "-")</td>
+                                    <td><small class="text-muted">@(r.ClockInDeviceName ?? "-")</small></td>
+                                </tr>
+                            }
+                            @if (!history.Any())
+                            {
+                                <tr><td colspan="6" class="text-center text-muted py-3">No attendance records yet.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Daily Diary -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-book me-2"></i>Daily Diary</h6>
+                    <small>@DateTime.Now.ToString("dd MMM yyyy")</small>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small"><i class="fas fa-tasks me-1 text-primary"></i>Activities Today</label>
+                        <textarea id="diaryActivities" class="form-control" rows="3" placeholder="What did you work on today?">@diary?.Activities</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small"><i class="fas fa-trophy me-1 text-success"></i>Achievements</label>
+                        <textarea id="diaryAchievements" class="form-control" rows="2" placeholder="What did you accomplish?">@diary?.Achievements</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small"><i class="fas fa-exclamation-triangle me-1 text-warning"></i>Challenges</label>
+                        <textarea id="diaryChallenges" class="form-control" rows="2" placeholder="Any challenges faced?">@diary?.Challenges</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small"><i class="fas fa-forward me-1 text-info"></i>Plan for Tomorrow</label>
+                        <textarea id="diaryTomorrow" class="form-control" rows="2" placeholder="What do you plan to do tomorrow?">@diary?.PlannedForTomorrow</textarea>
+                    </div>
+                    @if (!string.IsNullOrEmpty(diary?.SupervisorComment))
+                    {
+                        <div class="alert alert-info py-2 small">
+                            <i class="fas fa-comment me-1"></i><strong>Supervisor:</strong> @diary.SupervisorComment
+                        </div>
+                    }
+                    <button class="btn btn-warning w-100" onclick="saveDiary()">
+                        <i class="fas fa-save me-1"></i>Save Diary Entry
+                    </button>
+                    @if (diary?.UpdatedAt != null)
+                    {
+                        <small class="text-muted d-block text-center mt-2">Last saved: @diary.UpdatedAt?.ToString("HH:mm")</small>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+// ── Live Clock ──
+function updateClock() {
+    document.getElementById('currentTime').textContent = new Date().toLocaleTimeString('en-ZA');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Device Detection ──
+var deviceName = navigator.userAgent.match(/\(([^)]+)\)/)?.[1] || navigator.platform || 'Unknown Device';
+// Simplify device name
+if (deviceName.includes('iPhone')) deviceName = 'iPhone';
+else if (deviceName.includes('iPad')) deviceName = 'iPad';
+else if (deviceName.includes('Android')) {
+    var m = navigator.userAgent.match(/Android[^;]*;\s*([^)]+)/);
+    deviceName = m ? m[1].trim() : 'Android Device';
+} else if (deviceName.includes('Win')) deviceName = 'Windows PC';
+else if (deviceName.includes('Mac')) deviceName = 'MacOS';
+else if (deviceName.includes('Linux')) deviceName = 'Linux PC';
+document.getElementById('deviceName').textContent = deviceName;
+
+// ── Geolocation ──
+var currentLat = null, currentLng = null, currentAddress = null;
+
+function getLocation() {
+    if (!navigator.geolocation) {
+        document.getElementById('locationText').textContent = 'Geolocation not supported';
+        document.getElementById('locationStatus').className = 'alert alert-warning py-2 small mb-3';
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(
+        function(pos) {
+            currentLat = pos.coords.latitude;
+            currentLng = pos.coords.longitude;
+            document.getElementById('latDisplay').textContent = currentLat.toFixed(6);
+            document.getElementById('lngDisplay').textContent = currentLng.toFixed(6);
+            document.getElementById('mapContainer').style.display = 'block';
+            document.getElementById('locationStatus').className = 'alert alert-success py-2 small mb-3';
+            document.getElementById('locationText').textContent = 'Location detected!';
+            // Reverse geocode
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLng}&zoom=18&addressdetails=1`)
+                .then(r => r.json())
+                .then(d => {
+                    currentAddress = d.display_name || `${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`;
+                    document.getElementById('addressDisplay').textContent = currentAddress;
+                    document.getElementById('locationText').textContent = currentAddress.substring(0, 80) + (currentAddress.length > 80 ? '...' : '');
+                })
+                .catch(() => {
+                    currentAddress = `${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}`;
+                    document.getElementById('addressDisplay').textContent = currentAddress;
+                });
+        },
+        function(err) {
+            document.getElementById('locationText').textContent = 'Location access denied - please enable location';
+            document.getElementById('locationStatus').className = 'alert alert-danger py-2 small mb-3';
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+}
+getLocation();
+
+// ── Camera / Selfie ──
+var cameraStream = null;
+var capturedBase64 = null;
+
+async function startCamera() {
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 320, height: 240 } });
+        var video = document.getElementById('cameraPreview');
+        video.srcObject = cameraStream;
+        video.style.display = 'block';
+        document.getElementById('cameraPlaceholder').style.display = 'none';
+        document.getElementById('capturedSelfie').style.display = 'none';
+        return true;
+    } catch(e) {
+        console.log('Camera not available:', e);
+        return false;
+    }
+}
+
+function captureSelfie() {
+    var video = document.getElementById('cameraPreview');
+    var canvas = document.getElementById('selfieCanvas');
+    canvas.width = video.videoWidth || 320;
+    canvas.height = video.videoHeight || 240;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    capturedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+    document.getElementById('capturedSelfie').src = capturedBase64;
+    document.getElementById('capturedSelfie').style.display = 'block';
+    video.style.display = 'none';
+    stopCamera();
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+    }
+}
+
+// ── Clock Process ──
+async function startClockProcess(direction) {
+    var btn = direction === 'in' ? document.getElementById('btnClockIn') : document.getElementById('btnClockOut');
+    if (btn) btn.disabled = true;
+
+    // Try to start camera for selfie
+    var cameraAvailable = await startCamera();
+    if (cameraAvailable) {
+        // Wait 2 seconds for camera to warm up, then capture
+        await new Promise(r => setTimeout(r, 2000));
+        captureSelfie();
+    }
+
+    // Re-check location
+    if (!currentLat) getLocation();
+
+    // Small delay to ensure location is captured
+    await new Promise(r => setTimeout(r, 500));
+
+    var url = direction === 'in' ? '@Url.Action("ClockIn")' : '@Url.Action("ClockOut")';
+    try {
+        var res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                latitude: currentLat,
+                longitude: currentLng,
+                address: currentAddress,
+                deviceName: deviceName,
+                selfieBase64: capturedBase64
+            })
+        });
+        var data = await res.json();
+        if (data.success) {
+            if (typeof showToast === 'function') showToast('Clock ' + direction + ' successful: ' + data.time, 'success');
+            else alert('Clock ' + direction + ' successful: ' + data.time);
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            if (typeof showToast === 'function') showToast(data.message || 'Failed', 'error');
+            else alert(data.message || 'Failed');
+            if (btn) btn.disabled = false;
+        }
+    } catch(e) {
+        alert('Network error. Please try again.');
+        if (btn) btn.disabled = false;
+    }
+}
+
+// ── Save Diary ──
+async function saveDiary() {
+    try {
+        var res = await fetch('@Url.Action("SaveDiary")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                activities: document.getElementById('diaryActivities').value,
+                achievements: document.getElementById('diaryAchievements').value,
+                challenges: document.getElementById('diaryChallenges').value,
+                plannedForTomorrow: document.getElementById('diaryTomorrow').value
+            })
+        });
+        var data = await res.json();
+        if (data.success) {
+            if (typeof showToast === 'function') showToast('Diary saved successfully!', 'success');
+            else alert('Diary saved!');
+        }
+    } catch(e) {
+        alert('Failed to save diary.');
+    }
+}
+
+// ── Connection Status ──
+window.addEventListener('online', () => document.getElementById('connectionStatus').textContent = 'Online');
+window.addEventListener('offline', () => document.getElementById('connectionStatus').textContent = 'Offline');
+</script>
+}

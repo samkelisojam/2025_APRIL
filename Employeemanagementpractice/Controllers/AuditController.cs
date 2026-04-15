@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Employeemanagementpractice.Controllers
 {
-    [Authorize(Roles = "Admin,Manager,Staff")]
+    [Authorize(Roles = "Admin,Manager,Staff,ReadOnly")]
     public class AuditController : Controller
     {
         private readonly IAuditLogService _auditLogService;

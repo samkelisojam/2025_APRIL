@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Employeemanagementpractice.Controllers
 {
-    [Authorize(Roles = "Admin,Manager,Staff")]
+    [Authorize(Roles = "Admin,Manager,Staff,ReadOnly")]
     public class TeamLeaderController : Controller
     {
         private readonly ITeamLeaderService _teamLeaderService;

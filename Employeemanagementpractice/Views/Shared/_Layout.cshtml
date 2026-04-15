@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - EMS Portal</title>
+    <title>@ViewData["Title"] - BA Academy</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
@@ -18,20 +18,51 @@
         var isManager = User.IsInRole("Manager");
         var isStaff = User.IsInRole("Staff");
         var isTeamLeader = User.IsInRole("TeamLeader");
+        var isReadOnly = User.IsInRole("ReadOnly");
+        var isStudent = User.IsInRole("Student");
         var isAdminOrManager = isAdmin || isManager;
         var isStaffOrAbove = isAdmin || isManager || isStaff;
 
         <!-- Top Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background:#1e293b;min-height:50px;padding:0 16px;z-index:1050;">
             <div class="container-fluid px-0">
-                <a class="navbar-brand d-flex align-items-center py-0" href="@Url.Action("Index","Home")" style="font-size:0.95rem;font-weight:700;">
-                    <i class="fas fa-users-cog me-2 text-info"></i>EMS
-                </a>
+             
                 <button class="navbar-toggler border-0 py-1" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" style="font-size:0.85rem;">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="mainNav">
                     <ul class="navbar-nav me-auto mb-0">
+                        @if (isStudent)
+                        {
+                            <!-- ── Student Navigation ── -->
+                            <li class="nav-item">
+                                <a class="nav-link px-2 @(currentController == "StudentPortal" && currentAction == "Index" ? "active" : "")" href="@Url.Action("Index","StudentPortal")" style="font-size:0.8rem;">
+                                    <i class="fas fa-clock me-1"></i>Clock In/Out
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-2 @(currentController == "StudentPortal" && currentAction == "History" ? "active" : "")" href="@Url.Action("History","StudentPortal")" style="font-size:0.8rem;">
+                                    <i class="fas fa-history me-1"></i>My History
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-2 @(currentController == "Announcement" ? "active" : "")" href="@Url.Action("Index","Announcement")" style="font-size:0.8rem;">
+                                    <i class="fas fa-bullhorn me-1"></i>Announcements
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-2 @(currentController == "Training" ? "active" : "")" href="@Url.Action("Index","Training")" style="font-size:0.8rem;">
+                                    <i class="fas fa-chalkboard-teacher me-1"></i>Training
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-2 @(currentController == "Help" ? "active" : "")" href="@Url.Action("Index","Help")" style="font-size:0.8rem;">
+                                    <i class="fas fa-question-circle me-1"></i>Help
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
                         <!-- ── Core ── -->
                         <li class="nav-item">
                             <a class="nav-link px-2 @(currentController == "Home" ? "active" : "")" href="@Url.Action("Index","Home")" style="font-size:0.8rem;">
@@ -72,7 +103,7 @@
                         </li>
 
                         <!-- ── Staff+ menu ── -->
-                        @if (isStaffOrAbove)
+                        @if (isStaffOrAbove || isReadOnly)
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle px-2 @(currentController == "TeamLeader" || currentController == "Report" || currentController == "Audit" || currentController == "FileManagement" ? "active" : "")" href="#" data-bs-toggle="dropdown" style="font-size:0.8rem;">
@@ -89,6 +120,8 @@
                         }
 
                         <!-- ── Admin/Manager panel ── -->
+                        } @* end else (non-student nav) *@
+
                         @if (isAdminOrManager)
                         {
                             <li class="nav-item dropdown">
@@ -151,7 +184,7 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" style="font-size:0.78rem;min-width:220px;">
                                 <li><span class="dropdown-item-text" style="font-size:0.73rem;"><i class="fas fa-envelope me-2 text-muted"></i>@User.Identity?.Name</span></li>
-                                <li><span class="dropdown-item-text" style="font-size:0.7rem;"><i class="fas fa-id-badge me-2 text-muted"></i>Role: <strong>@(isAdmin ? "Admin" : isManager ? "Manager" : isStaff ? "Staff" : isTeamLeader ? "Team Leader" : "Read Only")</strong></span></li>
+                                <li><span class="dropdown-item-text" style="font-size:0.7rem;"><i class="fas fa-id-badge me-2 text-muted"></i>Role: <strong>@(isAdmin ? "Admin" : isManager ? "Manager" : isStaff ? "Staff" : isTeamLeader ? "Team Leader" : isReadOnly ? "Read Only" : isStudent ? "Student" : "Unknown")</strong></span></li>
                                 <li><hr class="dropdown-divider my-1" /></li>
                                 <li><a class="dropdown-item" href="@Url.Action("Index","Help")" style="font-size:0.75rem;"><i class="fas fa-question-circle me-2 text-muted"></i>Help</a></li>
                                 <li><hr class="dropdown-divider my-1" /></li>
@@ -198,7 +231,7 @@
 
             <!-- Footer -->
             <footer class="text-center py-2 text-muted border-top mt-4" style="background:#f8fafc;font-size:0.7rem;">
-                <i class="fas fa-shield-alt me-1 text-primary"></i> EMS Portal &copy; @DateTime.Now.Year
+                <i class="fas fa-shield-alt me-1 text-primary"></i> BA Academy &copy; @DateTime.Now.Year
                 <span class="mx-1">|</span> ASP.NET Core 8.0
                 <span class="mx-1">|</span> SQL Server
             </footer>
@@ -221,7 +254,7 @@
 
         <!-- Hidden user info for SignalR -->
         <input type="hidden" id="currentUserFullName" value="@User.Identity?.Name" />
-        <input type="hidden" id="currentUserRole" value="@(isAdmin ? "Admin" : isManager ? "Manager" : isTeamLeader ? "TeamLeader" : isStaff ? "Staff" : "ReadOnly")" />
+        <input type="hidden" id="currentUserRole" value="@(isAdmin ? "Admin" : isManager ? "Manager" : isTeamLeader ? "TeamLeader" : isStaff ? "Staff" : isStudent ? "Student" : "ReadOnly")" />
 
         <!-- Loading Overlay -->
         <div id="loadingOverlay" style="display:none;">

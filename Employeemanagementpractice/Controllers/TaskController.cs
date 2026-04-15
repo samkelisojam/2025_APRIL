@@ -44,6 +44,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Users = await _taskService.GetUserSelectListAsync();
@@ -52,6 +53,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Create(TaskViewModel model)
         {
             if (!ModelState.IsValid)
@@ -69,6 +71,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> UpdateStatus(int id, Models.TaskStatus status)
         {
             var currentUser = await _userManager.GetUserAsync(User);
@@ -80,6 +83,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> AddComment(int taskId, string comment, IFormFile? attachment)
         {
             var currentUser = await _userManager.GetUserAsync(User);

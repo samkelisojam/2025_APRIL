@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Employeemanagementpractice.Controllers
 {
-    [Authorize(Roles = "Admin,Manager,Staff")]
+    [Authorize(Roles = "Admin,Manager,Staff,ReadOnly")]
     public class ReportController : Controller
     {
         private readonly IReportService _reportService;
@@ -56,6 +56,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff")]
         public async Task<IActionResult> SaveReport(string reportName, string fieldsJson, string? filtersJson)
         {
             var currentUser = await _userManager.GetUserAsync(User);

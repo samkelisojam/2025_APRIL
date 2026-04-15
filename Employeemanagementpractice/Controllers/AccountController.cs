@@ -62,5 +62,55 @@ namespace Employeemanagementpractice.Controllers
         }
 
         public IActionResult AccessDenied() => View();
+
+        [HttpGet]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login");
+
+            ViewBag.MustChange = user.MustChangePassword;
+            ViewBag.Deadline = user.PasswordChangeDeadline;
+            ViewBag.UserName = user.FullName;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login");
+
+            ViewBag.MustChange = user.MustChangePassword;
+            ViewBag.Deadline = user.PasswordChangeDeadline;
+            ViewBag.UserName = user.FullName;
+
+            if (!ModelState.IsValid) return View(model);
+
+            if (model.NewPassword == model.CurrentPassword)
+            {
+                ModelState.AddModelError("NewPassword", "New password must be different from your current password.");
+                return View(model);
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+                return View(model);
+            }
+
+            // Clear the force-change flag
+            user.MustChangePassword = false;
+            user.PasswordChangeDeadline = null;
+            await _userManager.UpdateAsync(user);
+
+            TempData["Success"] = "Password changed successfully!";
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

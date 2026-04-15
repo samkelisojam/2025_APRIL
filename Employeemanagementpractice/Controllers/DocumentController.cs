@@ -23,6 +23,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Delete(int id, int studentId)
         {
             var result = await _documentService.DeleteAsync(id);
@@ -34,6 +35,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Upload(int studentId, int documentType, IFormFile file)
         {
             var result = await _documentService.UploadAsync(studentId, documentType, file, User.Identity?.Name);

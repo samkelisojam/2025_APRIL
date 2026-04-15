@@ -8976,11 +8976,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\Employeemanagementpractice\\Employeemanagementpractice\\Employeemanagementpractice.csproj",
+      "projectUniqueName": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Employeemanagementpractice.csproj",
       "projectName": "Employeemanagementpractice",
-      "projectPath": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\Employeemanagementpractice\\Employeemanagementpractice\\Employeemanagementpractice.csproj",
+      "projectPath": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Employeemanagementpractice.csproj",
       "packagesPath": "C:\\Users\\q658366\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\Employeemanagementpractice\\Employeemanagementpractice\\obj\\",
+      "outputPath": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

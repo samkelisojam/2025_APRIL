@@ -4,7 +4,10 @@
     <h4 class="fw-bold mb-0" style="font-size:1.1rem;"><i class="fas fa-user-check text-primary me-2"></i>Attendance Tracker</h4>
     <div class="d-flex gap-2">
         <input type="date" id="attendanceDate" class="form-control form-control-sm" style="width:180px;" />
-        <button class="btn btn-success btn-sm" id="btnBulkMark"><i class="fas fa-check-double me-1"></i>Bulk Mark All Present</button>
+        @if (!User.IsInRole("ReadOnly"))
+        {
+            <button class="btn btn-success btn-sm" id="btnBulkMark"><i class="fas fa-check-double me-1"></i>Bulk Mark All Present</button>
+        }
     </div>
 </div>
 
@@ -37,6 +40,7 @@
 const dateInput = document.getElementById('attendanceDate');
 dateInput.value = new Date().toISOString().split('T')[0];
 let students = [];
+const canProxy = @(User.IsInRole("TeamLeader") || User.IsInRole("Admin") || User.IsInRole("Manager") ? "true" : "false");
 
 async function loadAttendance() {
     try {
@@ -72,10 +76,12 @@ function renderTable() {
         <td><input type="time" class="form-control form-control-sm att-checkin" data-id="${s.studentId}" value="${s.checkIn || ''}" style="width:110px;" /></td>
         <td><input type="time" class="form-control form-control-sm att-checkout" data-id="${s.studentId}" value="${s.checkOut || ''}" style="width:110px;" /></td>
         <td><input type="text" class="form-control form-control-sm att-notes" data-id="${s.studentId}" value="${s.notes || ''}" placeholder="Notes..." style="width:130px;" /></td>
-        <td><button class="btn btn-sm btn-primary btn-mark" data-id="${s.studentId}"><i class="fas fa-save"></i></button></td>
+        <td><button class="btn btn-sm btn-primary btn-mark" data-id="${s.studentId}"><i class="fas fa-save"></i></button>
+        ${canProxy ? `<button class="btn btn-sm btn-outline-warning ms-1 btn-proxy" data-id="${s.studentId}" data-name="${s.name}" title="Clock In On Behalf"><i class="fas fa-user-clock"></i></button>` : ''}</td>
     </tr>`).join('');
 
     document.querySelectorAll('.btn-mark').forEach(btn => btn.addEventListener('click', () => markSingle(btn.dataset.id)));
+    document.querySelectorAll('.btn-proxy').forEach(btn => btn.addEventListener('click', () => proxyClockIn(btn.dataset.id, btn.dataset.name)));
 }
 
 async function markSingle(studentId) {
@@ -117,5 +123,19 @@ async function loadStats() {
 dateInput.addEventListener('change', loadAttendance);
 document.getElementById('searchStudent').addEventListener('input', renderTable);
 loadAttendance();
+
+async function proxyClockIn(studentId, studentName) {
+    const reason = prompt(`Clock in on behalf of ${studentName}?\nEnter reason:`);
+    if (!reason) return;
+    try {
+        const res = await fetch('/Attendance/ClockInOnBehalf', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentId: parseInt(studentId), reason: reason })
+        });
+        const data = await res.json();
+        if (data.success) { showToast(`Clocked in ${studentName} on behalf`, 'success'); loadAttendance(); }
+        else showToast(data.message || 'Failed', 'danger');
+    } catch(e) { showToast('Error: ' + e.message, 'danger'); }
+}
 </script>
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rjCpellypSs=",
+  "dgSpecHash": "IDVz1amua70=",
   "success": true,
-  "projectFilePath": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\Employeemanagementpractice\\Employeemanagementpractice\\Employeemanagementpractice.csproj",
+  "projectFilePath": "C:\\Users\\q658366\\Desktop\\projects--gitrepository\\2025_APRIL\\Employeemanagementpractice\\Employeemanagementpractice.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\q658366\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\q658366\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

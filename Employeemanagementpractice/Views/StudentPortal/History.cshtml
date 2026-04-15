@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Attendance History";
+    var student = ViewBag.Student as Employeemanagementpractice.Models.Student;
+    var records = ViewBag.Records as List<Employeemanagementpractice.Models.AttendanceRecord> ?? new();
+    var diaries = ViewBag.Diaries as List<Employeemanagementpractice.Models.DailyDiary> ?? new();
+    var from = (DateTime)ViewBag.From;
+    var to = (DateTime)ViewBag.To;
+}
+
+<div class="fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i>Back to Portal</a>
+            <h4 class="fw-bold mt-1"><i class="fas fa-history text-primary me-2"></i>Attendance History</h4>
+        </div>
+        <form method="get" class="d-flex gap-2 align-items-end">
+            <div><label class="form-label small mb-0">From</label><input type="date" name="from" value="@from.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+            <div><label class="form-label small mb-0">To</label><input type="date" name="to" value="@to.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i>Filter</button>
+        </form>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-2"><div class="card border-0 shadow-sm text-center p-2"><small class="text-muted">Total Days</small><h5 class="fw-bold mb-0">@records.Count</h5></div></div>
+        <div class="col-md-2"><div class="card border-0 shadow-sm text-center p-2"><small class="text-muted">Present</small><h5 class="fw-bold text-success mb-0">@records.Count(r => r.Status == "Present")</h5></div></div>
+        <div class="col-md-2"><div class="card border-0 shadow-sm text-center p-2"><small class="text-muted">Late</small><h5 class="fw-bold text-warning mb-0">@records.Count(r => r.Status == "Late")</h5></div></div>
+        <div class="col-md-2"><div class="card border-0 shadow-sm text-center p-2"><small class="text-muted">Absent</small><h5 class="fw-bold text-danger mb-0">@records.Count(r => r.Status == "Absent")</h5></div></div>
+        <div class="col-md-2"><div class="card border-0 shadow-sm text-center p-2"><small class="text-muted">Total Hours</small><h5 class="fw-bold text-info mb-0">@records.Where(r => r.HoursWorked.HasValue).Sum(r => r.HoursWorked!.Value).ToString("F1")</h5></div></div>
+        <div class="col-md-2"><div class="card border-0 shadow-sm text-center p-2"><small class="text-muted">Avg Hours/Day</small><h5 class="fw-bold text-primary mb-0">@(records.Any(r => r.HoursWorked.HasValue) ? records.Where(r => r.HoursWorked.HasValue).Average(r => r.HoursWorked!.Value).ToString("F1") : "0.0")</h5></div></div>
+    </div>
+
+    <!-- Records Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0" id="historyTable">
+                <thead class="table-light">
+                    <tr><th>Date</th><th>Status</th><th>Clock In</th><th>Location (In)</th><th>Clock Out</th><th>Location (Out)</th><th>Hours</th><th>Device</th><th>Diary</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in records)
+                    {
+                        var badge = r.Status switch { "Present" => "bg-success", "Late" => "bg-warning text-dark", "Absent" => "bg-danger", "Excused" => "bg-info", _ => "bg-secondary" };
+                        var d = diaries.FirstOrDefault(x => x.Date.Date == r.Date.Date);
+                        <tr>
+                            <td class="fw-bold">@r.Date.ToString("ddd dd MMM")</td>
+                            <td>
+                                <span class="badge @badge">@r.Status</span>
+                                @if (r.IsMarkedByProxy) { <small class="text-muted d-block">by @r.MarkedBy</small> }
+                            </td>
+                            <td>@(r.ClockInTime?.ToString("HH:mm") ?? "-")</td>
+                            <td><small class="text-muted">@(r.ClockInAddress?.Length > 30 ? r.ClockInAddress[..30] + "..." : r.ClockInAddress ?? "-")</small></td>
+                            <td>@(r.ClockOutTime?.ToString("HH:mm") ?? "-")</td>
+                            <td><small class="text-muted">@(r.ClockOutAddress?.Length > 30 ? r.ClockOutAddress[..30] + "..." : r.ClockOutAddress ?? "-")</small></td>
+                            <td class="fw-bold">@(r.HoursWorked?.ToString("F1") ?? "-")</td>
+                            <td><small>@(r.ClockInDeviceName ?? "-")</small></td>
+                            <td>
+                                @if (d != null)
+                                {
+                                    <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#diaryModal-@r.Id"><i class="fas fa-book"></i></button>
+
+                                    <div class="modal fade" id="diaryModal-@r.Id" tabindex="-1">
+                                        <div class="modal-dialog"><div class="modal-content">
+                                            <div class="modal-header bg-warning text-dark"><h6 class="modal-title"><i class="fas fa-book me-2"></i>Diary - @r.Date.ToString("dd MMM yyyy")</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                                            <div class="modal-body">
+                                                @if (!string.IsNullOrEmpty(d.Activities)) { <p><strong>Activities:</strong><br/>@d.Activities</p> }
+                                                @if (!string.IsNullOrEmpty(d.Achievements)) { <p><strong>Achievements:</strong><br/>@d.Achievements</p> }
+                                                @if (!string.IsNullOrEmpty(d.Challenges)) { <p><strong>Challenges:</strong><br/>@d.Challenges</p> }
+                                                @if (!string.IsNullOrEmpty(d.PlannedForTomorrow)) { <p><strong>Plans:</strong><br/>@d.PlannedForTomorrow</p> }
+                                                @if (!string.IsNullOrEmpty(d.SupervisorComment)) { <div class="alert alert-info py-2"><strong>Supervisor:</strong> @d.SupervisorComment</div> }
+                                            </div>
+                                        </div></div>
+                                    </div>
+                                }
+                                else { <span class="text-muted">-</span> }
+                            </td>
+                        </tr>
+                    }
+                    @if (!records.Any())
+                    {
+                        <tr><td colspan="9" class="text-center text-muted py-4">No records found for this period.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (records.Any())
+    {
+        <div class="mt-3">
+            <button class="btn btn-danger btn-sm" onclick="exportTableToPDF('historyTable','Attendance History - @student?.FullName')"><i class="fas fa-file-pdf me-1"></i>Export PDF</button>
+        </div>
+    }
+</div>

@@ -63,6 +63,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Create(int? teamLeaderId)
         {
             var vm = new StudentViewModel();
@@ -86,6 +87,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Create(StudentViewModel model)
         {
             // Enforce TL can only create under themselves
@@ -119,6 +121,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Edit(int id)
         {
             // Team leaders can only edit their own students
@@ -140,6 +143,7 @@ namespace Employeemanagementpractice.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Edit(StudentViewModel model)
         {
             if (!ModelState.IsValid)

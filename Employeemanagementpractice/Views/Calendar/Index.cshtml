@@ -2,7 +2,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="fw-bold mb-0" style="font-size:1.1rem;"><i class="fas fa-calendar-alt text-primary me-2"></i>Calendar & Events</h4>
-    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#eventModal"><i class="fas fa-plus me-1"></i>New Event</button>
+    @if (!User.IsInRole("ReadOnly"))
+    {
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#eventModal"><i class="fas fa-plus me-1"></i>New Event</button>
+    }
 </div>
 
 <div class="row g-3 mb-4">

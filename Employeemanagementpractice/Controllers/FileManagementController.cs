@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Employeemanagementpractice.Controllers
 {
-    [Authorize(Roles = "Admin,Manager,Staff")]
+    [Authorize(Roles = "Admin,Manager,Staff,ReadOnly")]
     public class FileManagementController : Controller
     {
         private readonly IFileManagementService _fileManagementService;
@@ -92,6 +92,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff")]
         public async Task<IActionResult> BulkDownload([FromBody] BulkActionRequest request)
         {
             if (!await VerifyPin(request.Pin))
@@ -109,6 +110,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff")]
         public async Task<IActionResult> SendEmail([FromBody] EmailRequest request)
         {
             if (!await VerifyPin(request.Pin))

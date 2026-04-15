@@ -26,6 +26,7 @@ namespace Employeemanagementpractice.Data
         public DbSet<BackupRecord> BackupRecords { get; set; }
         public DbSet<CalendarEvent> CalendarEvents { get; set; }
         public DbSet<AttendanceRecord> AttendanceRecords { get; set; }
+        public DbSet<DailyDiary> DailyDiaries { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

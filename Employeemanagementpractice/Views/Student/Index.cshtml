@@ -3,12 +3,16 @@
 @{
     ViewData["Title"] = "Students";
     var isTL = ViewBag.IsTeamLeader == true;
+    var isReadOnly = User.IsInRole("ReadOnly");
 }
 
 <div class="fade-in">
     <div class="page-header">
         <h2 style="font-size:1.1rem;"><i class="fas fa-user-graduate me-2"></i>Students</h2>
-        <a href="@Url.Action("Create")" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Register Student</a>
+        @if (!isReadOnly)
+        {
+            <a href="@Url.Action("Create")" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Register Student</a>
+        }
     </div>
 
     <!-- Filter Bar -->
@@ -80,8 +84,11 @@
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-outline-info btn-profile-card" data-id="@s.Id" data-bs-toggle="tooltip" title="Profile Card"><i class="fas fa-id-card"></i></button>
                                 <a href="@Url.Action("Profile", new { id = s.Id })" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Profile"><i class="fas fa-eye"></i></a>
-                                <a href="@Url.Action("Edit", new { id = s.Id })" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>
-                                @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Staff"))
+                                @if (!isReadOnly)
+                                {
+                                    <a href="@Url.Action("Edit", new { id = s.Id })" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Edit"><i class="fas fa-edit"></i></a>
+                                }
+                                @if (!isReadOnly && (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Staff")))
                                 {
                                     <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@s.Id"><i class="fas fa-ban"></i></button>
                                 }
@@ -114,7 +121,7 @@
                 {
                     <tr><td colspan="8" class="text-center text-muted py-5">
                         <i class="fas fa-user-graduate fa-3x mb-3 d-block opacity-25"></i>
-                        No students found. <a href="@Url.Action("Create")">Register one now</a>.
+                        No students found. @if (!isReadOnly) { <a href="@Url.Action("Create")">Register one now</a> }
                     </td></tr>
                 }
             </tbody>

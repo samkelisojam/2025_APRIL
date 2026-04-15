@@ -109,6 +109,9 @@ namespace Employeemanagementpractice.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("bit");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -116,6 +119,9 @@ namespace Employeemanagementpractice.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("PasswordChangeDeadline")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -171,11 +177,59 @@ namespace Employeemanagementpractice.Migrations
                     b.Property<TimeSpan?>("CheckOutTime")
                         .HasColumnType("time");
 
+                    b.Property<string>("ClockInAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ClockInDeviceName")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<double?>("ClockInLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("ClockInLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ClockInSelfieUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ClockInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ClockOutAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ClockOutDeviceName")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<double?>("ClockOutLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("ClockOutLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ClockOutSelfieUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ClockOutTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<double?>("HoursWorked")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("IsMarkedByProxy")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MarkedBy")
                         .HasMaxLength(200)
@@ -355,6 +409,60 @@ namespace Employeemanagementpractice.Migrations
                     b.HasIndex("CreatedByUserId");
 
                     b.ToTable("CalendarEvents");
+                });
+
+            modelBuilder.Entity("Employeemanagementpractice.Models.DailyDiary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Achievements")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Activities")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int?>("AttendanceRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Challenges")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PlannedForTomorrow")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SupervisorComment")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttendanceRecordId")
+                        .IsUnique()
+                        .HasFilter("[AttendanceRecordId] IS NOT NULL");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("DailyDiaries");
                 });
 
             modelBuilder.Entity("Employeemanagementpractice.Models.PayrollRecord", b =>
@@ -1061,6 +1169,10 @@ namespace Employeemanagementpractice.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("WhatsAppNumber")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -1081,6 +1193,8 @@ namespace Employeemanagementpractice.Migrations
                         .IsUnique();
 
                     b.HasIndex("TeamLeaderId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Students");
                 });
@@ -1658,6 +1772,23 @@ namespace Employeemanagementpractice.Migrations
                     b.Navigation("CreatedBy");
                 });
 
+            modelBuilder.Entity("Employeemanagementpractice.Models.DailyDiary", b =>
+                {
+                    b.HasOne("Employeemanagementpractice.Models.AttendanceRecord", "AttendanceRecord")
+                        .WithOne("DailyDiary")
+                        .HasForeignKey("Employeemanagementpractice.Models.DailyDiary", "AttendanceRecordId");
+
+                    b.HasOne("Employeemanagementpractice.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AttendanceRecord");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Employeemanagementpractice.Models.PayrollRecord", b =>
                 {
                     b.HasOne("Employeemanagementpractice.Models.Student", "Student")
@@ -1688,7 +1819,13 @@ namespace Employeemanagementpractice.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Employeemanagementpractice.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("TeamLeader");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Employeemanagementpractice.Models.StudentDocument", b =>
@@ -1844,6 +1981,11 @@ namespace Employeemanagementpractice.Migrations
                     b.Navigation("CreatedTasks");
 
                     b.Navigation("TeamLeader");
+                });
+
+            modelBuilder.Entity("Employeemanagementpractice.Models.AttendanceRecord", b =>
+                {
+                    b.Navigation("DailyDiary");
                 });
 
             modelBuilder.Entity("Employeemanagementpractice.Models.Student", b =>

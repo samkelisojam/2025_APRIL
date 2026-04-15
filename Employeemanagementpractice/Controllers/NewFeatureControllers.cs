@@ -44,6 +44,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> UpdateProgress([FromBody] ProgressRequest req)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -53,6 +54,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Complete([FromBody] CompleteRequest req)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -166,6 +168,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Create([FromBody] CalendarEvent ev)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -175,6 +178,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Delete([FromBody] IdRequest req)
         {
             var result = await _calendar.DeleteEventAsync(req.Id);
@@ -307,6 +311,7 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> Mark([FromBody] MarkAttendanceRequest req)
         {
             var result = await _attendance.MarkAttendanceAsync(req.StudentId, req.Date, req.Status, req.Notes, User.Identity?.Name ?? "");
@@ -314,10 +319,19 @@ namespace Employeemanagementpractice.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
         public async Task<IActionResult> BulkMark([FromBody] BulkMarkRequest req)
         {
             var result = await _attendance.BulkMarkAttendanceAsync(req.StudentIds, req.Date, req.Status, User.Identity?.Name ?? "");
             return Json(new { success = result.Success });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Staff,TeamLeader")]
+        public async Task<IActionResult> ClockInOnBehalf([FromBody] ProxyClockRequest req)
+        {
+            var result = await _attendance.ClockInAsync(req.StudentId, null, null, null, null, null, User.Identity?.Name, true);
+            return Json(new { success = result.Success, message = result.ErrorMessage });
         }
 
         [HttpGet]
@@ -327,6 +341,7 @@ namespace Employeemanagementpractice.Controllers
 
     public class MarkAttendanceRequest { public int StudentId { get; set; } public DateTime Date { get; set; } public string Status { get; set; } = "Present"; public string? Notes { get; set; } }
     public class BulkMarkRequest { public List<int> StudentIds { get; set; } = new(); public DateTime Date { get; set; } public string Status { get; set; } = "Present"; }
+    public class ProxyClockRequest { public int StudentId { get; set; } }
 
     // ═══════════════════════════════════════════
     // 3. STUDENT CARD (API endpoint)

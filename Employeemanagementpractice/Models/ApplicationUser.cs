@@ -19,6 +19,10 @@ namespace Employeemanagementpractice.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
 
+        // Force password change on first login
+        public bool MustChangePassword { get; set; } = false;
+        public DateTime? PasswordChangeDeadline { get; set; }
+
         // PIN for sensitive operations (e.g. 202612345678)
         [MaxLength(20)]
         public string? SecurityPin { get; set; }

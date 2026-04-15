@@ -4,7 +4,10 @@
 <div class="fade-in">
     <div class="page-header">
         <h2 style="font-size:1.1rem;"><i class="fas fa-tasks me-2"></i>Tasks</h2>
-        <a href="@Url.Action("Create")" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Task</a>
+        @if (!User.IsInRole("ReadOnly"))
+        {
+            <a href="@Url.Action("Create")" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Task</a>
+        }
     </div>
 
     <!-- Filter -->

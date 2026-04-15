@@ -204,6 +204,43 @@ namespace Employeemanagementpractice.Services
             }
             ws2.Columns().AdjustToContents();
 
+            // Attendance
+            var attendance = await _context.AttendanceRecords.Include(a => a.Student).OrderByDescending(a => a.Date).ToListAsync();
+            var ws3 = wb.Worksheets.Add("Attendance");
+            ws3.Cell(1, 1).Value = "Student"; ws3.Cell(1, 2).Value = "Date"; ws3.Cell(1, 3).Value = "Status";
+            ws3.Cell(1, 4).Value = "Clock In"; ws3.Cell(1, 5).Value = "Clock Out"; ws3.Cell(1, 6).Value = "Hours Worked";
+            ws3.Cell(1, 7).Value = "Clock In Address"; ws3.Cell(1, 8).Value = "Clock In Device";
+            ws3.Cell(1, 9).Value = "Clock Out Address"; ws3.Cell(1, 10).Value = "Clock Out Device";
+            ws3.Cell(1, 11).Value = "Proxy"; ws3.Cell(1, 12).Value = "Marked By";
+            for (int i = 0; i < attendance.Count; i++)
+            {
+                var a = attendance[i]; var r = i + 2;
+                ws3.Cell(r, 1).Value = a.Student?.FullName ?? ""; ws3.Cell(r, 2).Value = a.Date.ToString("yyyy-MM-dd");
+                ws3.Cell(r, 3).Value = a.Status ?? ""; ws3.Cell(r, 4).Value = a.ClockInTime?.ToString("HH:mm") ?? "";
+                ws3.Cell(r, 5).Value = a.ClockOutTime?.ToString("HH:mm") ?? "";
+                ws3.Cell(r, 6).Value = a.HoursWorked?.ToString("F1") ?? "";
+                ws3.Cell(r, 7).Value = a.ClockInAddress ?? ""; ws3.Cell(r, 8).Value = a.ClockInDeviceName ?? "";
+                ws3.Cell(r, 9).Value = a.ClockOutAddress ?? ""; ws3.Cell(r, 10).Value = a.ClockOutDeviceName ?? "";
+                ws3.Cell(r, 11).Value = a.IsMarkedByProxy ? "Yes" : "No"; ws3.Cell(r, 12).Value = a.MarkedBy ?? "";
+            }
+            ws3.Columns().AdjustToContents();
+
+            // Daily Diaries
+            var diaries = await _context.DailyDiaries.Include(d => d.Student).OrderByDescending(d => d.Date).ToListAsync();
+            var ws4 = wb.Worksheets.Add("Daily Diaries");
+            ws4.Cell(1, 1).Value = "Student"; ws4.Cell(1, 2).Value = "Date"; ws4.Cell(1, 3).Value = "Activities";
+            ws4.Cell(1, 4).Value = "Achievements"; ws4.Cell(1, 5).Value = "Challenges"; ws4.Cell(1, 6).Value = "Planned For Tomorrow";
+            ws4.Cell(1, 7).Value = "Supervisor Comment";
+            for (int i = 0; i < diaries.Count; i++)
+            {
+                var d = diaries[i]; var r = i + 2;
+                ws4.Cell(r, 1).Value = d.Student?.FullName ?? ""; ws4.Cell(r, 2).Value = d.Date.ToString("yyyy-MM-dd");
+                ws4.Cell(r, 3).Value = d.Activities ?? ""; ws4.Cell(r, 4).Value = d.Achievements ?? "";
+                ws4.Cell(r, 5).Value = d.Challenges ?? ""; ws4.Cell(r, 6).Value = d.PlannedForTomorrow ?? "";
+                ws4.Cell(r, 7).Value = d.SupervisorComment ?? "";
+            }
+            ws4.Columns().AdjustToContents();
+
             wb.SaveAs(filePath);
         }
 
@@ -482,6 +519,11 @@ namespace Employeemanagementpractice.Services
         Task<ServiceResult> MarkAttendanceAsync(int studentId, DateTime date, string status, string? notes, string markedBy);
         Task<ServiceResult> BulkMarkAttendanceAsync(List<int> studentIds, DateTime date, string status, string markedBy);
         Task<object> GetAttendanceStatsAsync(DateTime from, DateTime to, int? studentId = null);
+        Task<ServiceResult<int>> ClockInAsync(int studentId, double? latitude, double? longitude, string? address, string? deviceName, string? selfieUrl, string? markedBy, bool isProxy);
+        Task<ServiceResult> ClockOutAsync(int studentId, double? latitude, double? longitude, string? address, string? deviceName, string? selfieUrl);
+        Task<AttendanceRecord?> GetTodayRecordAsync(int studentId);
+        Task<List<AttendanceRecord>> GetStudentHistoryAsync(int studentId, DateTime from, DateTime to);
+        Task<object> GetStudentSummaryAsync(int studentId, DateTime from, DateTime to);
     }
 
     public class AttendanceService : IAttendanceService
@@ -501,14 +543,15 @@ namespace Employeemanagementpractice.Services
         public async Task<ServiceResult> MarkAttendanceAsync(int studentId, DateTime date, string status, string? notes, string markedBy)
         {
             var existing = await _context.AttendanceRecords.FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date.Date == date.Date);
-            if (existing != null) { existing.Status = status; existing.Notes = notes; }
+            if (existing != null) { existing.Status = status; existing.Notes = notes; existing.MarkedBy = markedBy; existing.IsMarkedByProxy = true; }
             else
             {
                 _context.AttendanceRecords.Add(new AttendanceRecord
                 {
                     StudentId = studentId, Date = date.Date, Status = status,
-                    Notes = notes, MarkedBy = markedBy,
-                    CheckInTime = status == "Present" || status == "Late" ? DateTime.Now.TimeOfDay : null
+                    Notes = notes, MarkedBy = markedBy, IsMarkedByProxy = true,
+                    ClockInTime = (status == "Present" || status == "Late") ? DateTime.Now : null,
+                    CheckInTime = (status == "Present" || status == "Late") ? DateTime.Now.TimeOfDay : null
                 });
             }
             await _context.SaveChangesAsync();
@@ -520,6 +563,100 @@ namespace Employeemanagementpractice.Services
             foreach (var sid in studentIds)
                 await MarkAttendanceAsync(sid, date, status, null, markedBy);
             return ServiceResult.Ok();
+        }
+
+        public async Task<ServiceResult<int>> ClockInAsync(int studentId, double? latitude, double? longitude, string? address, string? deviceName, string? selfieUrl, string? markedBy, bool isProxy)
+        {
+            var today = DateTime.Today;
+            var existing = await _context.AttendanceRecords.FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == today);
+            if (existing != null && existing.ClockInTime != null)
+                return new ServiceResult<int> { Success = false, ErrorMessage = "Already clocked in today" };
+
+            var now = DateTime.Now;
+            if (existing != null)
+            {
+                existing.ClockInTime = now;
+                existing.ClockInLatitude = latitude;
+                existing.ClockInLongitude = longitude;
+                existing.ClockInAddress = address;
+                existing.ClockInDeviceName = deviceName;
+                existing.ClockInSelfieUrl = selfieUrl;
+                existing.Status = now.Hour >= 9 ? "Late" : "Present";
+                existing.CheckInTime = now.TimeOfDay;
+                existing.MarkedBy = markedBy;
+                existing.IsMarkedByProxy = isProxy;
+            }
+            else
+            {
+                existing = new AttendanceRecord
+                {
+                    StudentId = studentId, Date = today,
+                    Status = now.Hour >= 9 ? "Late" : "Present",
+                    ClockInTime = now,
+                    ClockInLatitude = latitude, ClockInLongitude = longitude,
+                    ClockInAddress = address, ClockInDeviceName = deviceName,
+                    ClockInSelfieUrl = selfieUrl,
+                    CheckInTime = now.TimeOfDay,
+                    MarkedBy = markedBy,
+                    IsMarkedByProxy = isProxy
+                };
+                _context.AttendanceRecords.Add(existing);
+            }
+            await _context.SaveChangesAsync();
+            return new ServiceResult<int> { Success = true, Data = existing.Id };
+        }
+
+        public async Task<ServiceResult> ClockOutAsync(int studentId, double? latitude, double? longitude, string? address, string? deviceName, string? selfieUrl)
+        {
+            var today = DateTime.Today;
+            var record = await _context.AttendanceRecords.FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == today);
+            if (record == null || record.ClockInTime == null)
+                return new ServiceResult { Success = false, ErrorMessage = "Must clock in first" };
+            if (record.ClockOutTime != null)
+                return new ServiceResult { Success = false, ErrorMessage = "Already clocked out today" };
+
+            var now = DateTime.Now;
+            record.ClockOutTime = now;
+            record.ClockOutLatitude = latitude;
+            record.ClockOutLongitude = longitude;
+            record.ClockOutAddress = address;
+            record.ClockOutDeviceName = deviceName;
+            record.ClockOutSelfieUrl = selfieUrl;
+            record.CheckOutTime = now.TimeOfDay;
+            record.HoursWorked = Math.Round((now - record.ClockInTime.Value).TotalHours, 2);
+
+            await _context.SaveChangesAsync();
+            return ServiceResult.Ok();
+        }
+
+        public async Task<AttendanceRecord?> GetTodayRecordAsync(int studentId)
+        {
+            return await _context.AttendanceRecords
+                .FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == DateTime.Today);
+        }
+
+        public async Task<List<AttendanceRecord>> GetStudentHistoryAsync(int studentId, DateTime from, DateTime to)
+        {
+            return await _context.AttendanceRecords
+                .Where(a => a.StudentId == studentId && a.Date >= from && a.Date <= to)
+                .OrderByDescending(a => a.Date)
+                .ToListAsync();
+        }
+
+        public async Task<object> GetStudentSummaryAsync(int studentId, DateTime from, DateTime to)
+        {
+            var records = await _context.AttendanceRecords
+                .Where(a => a.StudentId == studentId && a.Date >= from && a.Date <= to)
+                .ToListAsync();
+
+            var totalDays = records.Count;
+            var present = records.Count(a => a.Status == "Present");
+            var late = records.Count(a => a.Status == "Late");
+            var absent = records.Count(a => a.Status == "Absent");
+            var totalHours = records.Where(a => a.HoursWorked.HasValue).Sum(a => a.HoursWorked!.Value);
+            var avgHours = records.Any(a => a.HoursWorked.HasValue) ? records.Where(a => a.HoursWorked.HasValue).Average(a => a.HoursWorked!.Value) : 0;
+
+            return new { totalDays, present, late, absent, totalHours = Math.Round(totalHours, 1), avgHoursPerDay = Math.Round(avgHours, 1) };
         }
 
         public async Task<object> GetAttendanceStatsAsync(DateTime from, DateTime to, int? studentId = null)
@@ -535,6 +672,76 @@ namespace Employeemanagementpractice.Services
             var rate = total > 0 ? Math.Round((present + late) * 100.0 / total, 1) : 0;
 
             return new { total, present, absent, late, excused, attendanceRate = rate };
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // 9b. DAILY DIARY SERVICE
+    // ═══════════════════════════════════════════
+    public interface IDailyDiaryService
+    {
+        Task<DailyDiary?> GetDiaryAsync(int studentId, DateTime date);
+        Task<List<DailyDiary>> GetDiaryHistoryAsync(int studentId, DateTime from, DateTime to);
+        Task<ServiceResult> SaveDiaryAsync(int studentId, DateTime date, string? activities, string? achievements, string? challenges, string? plannedForTomorrow);
+        Task<ServiceResult> AddSupervisorCommentAsync(int diaryId, string comment);
+    }
+
+    public class DailyDiaryService : IDailyDiaryService
+    {
+        private readonly ApplicationDbContext _context;
+        public DailyDiaryService(ApplicationDbContext context) => _context = context;
+
+        public async Task<DailyDiary?> GetDiaryAsync(int studentId, DateTime date)
+        {
+            return await _context.DailyDiaries
+                .Include(d => d.AttendanceRecord)
+                .FirstOrDefaultAsync(d => d.StudentId == studentId && d.Date == date.Date);
+        }
+
+        public async Task<List<DailyDiary>> GetDiaryHistoryAsync(int studentId, DateTime from, DateTime to)
+        {
+            return await _context.DailyDiaries
+                .Include(d => d.AttendanceRecord)
+                .Where(d => d.StudentId == studentId && d.Date >= from && d.Date <= to)
+                .OrderByDescending(d => d.Date)
+                .ToListAsync();
+        }
+
+        public async Task<ServiceResult> SaveDiaryAsync(int studentId, DateTime date, string? activities, string? achievements, string? challenges, string? plannedForTomorrow)
+        {
+            var existing = await _context.DailyDiaries.FirstOrDefaultAsync(d => d.StudentId == studentId && d.Date == date.Date);
+            var attendance = await _context.AttendanceRecords.FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date == date.Date);
+
+            if (existing != null)
+            {
+                existing.Activities = activities;
+                existing.Achievements = achievements;
+                existing.Challenges = challenges;
+                existing.PlannedForTomorrow = plannedForTomorrow;
+                existing.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                _context.DailyDiaries.Add(new DailyDiary
+                {
+                    StudentId = studentId, Date = date.Date,
+                    AttendanceRecordId = attendance?.Id,
+                    Activities = activities, Achievements = achievements,
+                    Challenges = challenges, PlannedForTomorrow = plannedForTomorrow
+                });
+            }
+            await _context.SaveChangesAsync();
+            return ServiceResult.Ok();
+        }
+
+        public async Task<ServiceResult> AddSupervisorCommentAsync(int diaryId, string comment)
+        {
+            var diary = await _context.DailyDiaries.FindAsync(diaryId);
+            if (diary == null) return new ServiceResult { Success = false, ErrorMessage = "Diary not found" };
+            diary.SupervisorComment = comment;
+            diary.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return ServiceResult.Ok();
         }
     }
 

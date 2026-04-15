@@ -57,6 +57,13 @@ namespace Employeemanagementpractice.Models
         [Key]
         public int Id { get; set; }
 
+        // Link to ApplicationUser for login
+        [MaxLength(450)]
+        public string? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public ApplicationUser? User { get; set; }
+
         [Required]
         public int TeamLeaderId { get; set; }
 
